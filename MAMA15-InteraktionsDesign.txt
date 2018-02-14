@@ -1,0 +1,381 @@
+﻿INTERAKTIONSDESIGN:
+
+DESIGN:
+	Två betydelser:
+		The Final Solution/Plan.
+		The Process.
+		
+GRUNDLÄGGANDE AKTIVITETER I INTERAKTIONSDESIGN:
+	* Ta fram krav.
+	* Designa alternativ
+	* Bygga prototyper
+	* Utvärdering
+
+UNIVERSELL DESIGN:
+	"Att designa för alla"
+	
+	Viktigt för att:
+		Användare har olika:
+		Ålder
+		Kön
+		Språk 
+		Kultur
+		Fysisk och kognitiv förmåga
+		Personlighet
+		
+	Kan dock leda till "minsta gemensamma nämnare"-design.
+	
+ANVÄNDARCENTRERAD DESIGN:
+	* Tidigt fokus på användarna och deras uppgifter.
+	* Empiriska mätningar
+	* Iterativ design.
+	
+FUNKTIONER/TJÄNSTER:
+	FUNKTIONSANALYS:
+		1. Utgå från en lista, som tagits fram genom ex. brainstorming och användarstudie.
+		2. Låt alla gruppmedelemmar markera Nödvändigt, Önskvärt, och Onödig.
+		3. Välj möjliga hudvudfunktioner att gå vidare med.
+		
+	CARD SORTING METHOD:
+		Inte helt olik affinitetsdiagrammetoden.
+
+MENTALA MODELLER:
+	Vad en användare tror hur ett system är och hur det fungerar i den specifika kontexten. En slags intern representation.
+	Mentala modeller är dynamiska, när man lär sig ändras användarens antaganden.
+
+KONCEPTUELL MODELL:
+	"Hur man vill att användaren ska uppfatta ens system!"
+	Designerns mentala modell skiljer sig från användarens, därför används en konceptuell modell för att förmedla systemet genom något som användare och designer har gemensamt.
+	
+	HUVUDKOMPONENTERNA I EN KONCEPTUELL MODELL:
+		* Metaforer
+			* Underlättar för användaren att förstå måldomänen.
+			* Kunskap, erfarenheter och begrepp från källdomänen används för att organisera innehållet i måldomänen.
+			* En väl utformad metafor erbjuder anvädaren en god konceptuell modell.
+			
+			Problem:
+				En metafor som bygger på en gammal källdomän resonerar inte hos yngra användare.
+				Hjälper inte användare att hitta tjäsnter som är datorspecifika.
+					- Hur gör man en sökning i en bokhylla.
+				Man riskerar att bryta konventioner och kulturella regler.	
+					- Papperskorg på skrivbordet?
+				Begränsar fantasin hos designer att komma på nya konceptuella modeller.
+				
+		* Koncepten, deras attribut och de aktiviteter som kan utföras med dem (t.ex. spara, återbesöka, och organisera)
+		* Inbördes förhållanden, t.ex. hurvida ett objekt innehåller ett annat objekt.
+		* Kopplingen(mappning), mellan koncepten och användarupplevelsen som proudkten är utformad att stödja eller framkalla. (t.ex. att man kan besöka webbplatser som man redan beökt genom att gå igenom en lista av besökta webbläsare i webbläsaren.
+		
+	Olika typer av konceptuella modeller:
+		En modell kan vara...
+			* Baserad på en aktivitet eller process.
+			* Baserad på ett objekt.
+			* Baserad på en metafor.
+			* En kombination av flera.
+		
+		
+INTERAKTIONSTYPER:
+	"De sätt en användare interagerar med ett användargränssnitt.(på en konceptuell nivå)"
+	
+	FYRA OLIKA TYPER:
+		* Instruerande, ex kommandon, trycka på knappar etc.
+		* Konverserande/samtalande, ex. steg-för-steg instruktioner, eller röstbaserad dialog via telefon.
+		* Manipulerande, ex. flyttande filer till mappar.
+		* Utforskande, användaren rör sig genom miljöer.
+	EMOTIONAL INTERACTIONS:
+		Överväga de känslorna som uppstår i interaktion med gränssnittet.
+		
+		Hur vi känner påverkar hur vi tänker.
+			Rädd -> mindre toleranta och flexibla, svårt att se lösningar.
+			Glad -> Lättare att hitta lösningar, tänker utanför boxen.
+			
+		Kall och Het kognition:
+			Kall:
+				Rationella informationsdrivan mentala processer.
+			Het:
+				Mentala processer när de drivs och färgas av vår motivationm, känslor, och affekter. (Affekt == Automatiska, ofta kortvariga känsloreaktioner.)
+		
+		Jordan's Pleasure Model:
+			Hiarki:
+				Pleasure
+					Usability
+						Functionality
+						
+				Funkionallitet är grunden, användarbarhet för att kunna använda funktioner, Pleasure av användbarheten.
+		
+	EXPRESSIVE ASPECTS:
+		"Attractive things work better" - D. Norman
+		Gör användare mer toleranta(Se EMOTIONAL INTERACTIONS)
+			Exempel:
+				Dynamiska ikoner (papperskorg som expanderar)
+				Talande meddelanden
+			För vissa kan det kännas påträngande.
+			
+	FRUSTRATING ASPECTS:
+		Saker som användare kan uppleva frustration över.
+		* Gimmickar
+		* Felmeddelanden
+		* Väntan
+		* Uppgradering
+		* Utseende
+		
+	PERSUASUVE TECHNOLOGIES:
+		Övertygande, avsiktligt designade för att förändra folks attityder och beteende.
+		
+	TYPER AV ANVÄNDARGRÄNSNITT:
+		* Kommandobaserade interaktion
+		* WIMP - Windows, icons, menus, and pointers.
+		* GUI - Graphical User Interface
+		* Wearable tech.
+		* VR och AR
+		* Tangible Interfaces (Interagera med digital information genom att röra något fysiskt)
+		* NUI - Natural User Interfaces, ett användargrä som gör det möjligt för oss att interagera med en dator sätt som vi interagerar med den fysiska världen, genom att använda vår röst, våra händer och kroppar.
+		* Ubiquitious/pervasive computing
+	
+	KONKRETISERING AV ANVÄNDARGRÄNSNITTET:
+		*GESTALT LAGARNA:
+			* Lagen om närhet.
+			* Lagen om likhet.
+			* Lagon om slutenhet.
+
+		* FÄRG
+			* Kan likt gestaltlagarna användasför att skilja funktioner åt.
+
+		*KONKRETISERING:
+			* STYRDON - HÅRDVARA
+			* Utformning av GUI-komponenter.
+			* Översikt, orientering, och navigering
+			* Felhantering
+				TVÅ SÄTT ATT HJÄLPA ANVÄNDAREN:
+					- Förebygga fel
+					- Åtgärda fel
+				
+				Upptäckt-diagnos-åtgärd
+					* Hur lätt är det att upptäcka felet - och hur lång tid tar det?
+					* Hur lätt eler svårt är det att diagonstisera och förstå felet/problemet?
+					* Hur tydligt framgår det vilken åtgärd som är rätt?
+					
+				PRINCIPER FÖR GOD FELHANTERING:
+				
+					* SYNLIGHET, gör rätt saker synliga.
+					* FEEDBACK, bra och begripliga.
+					* MAPPNING, vettig layout.
+					* REVERSIBILITET, markera om något är irreversibelt, man ska kunna ändra det som är fel.
+					* FORCING FUNCTIONS, tvingar användaren till ett visst beteende. Ex. micron kan inte startas om dörren inte är stängd.
+					
+				RIKTLINJER FÖR FELMEDDELANDEN:
+				* Var artig.
+				* Undvik ord som FATAL, ERROR, ILLEGAL, etc.
+				* Undvik långa felkoder och versaler.
+				* Ge exakt information.
+				* Erbjud en hjälpikon.
+				* Erbjud information på olika nivåer, så att kortare meddelande kan kompletteras med längre förklaringar.
+				
+			* Fitts lag
+				* Användare upplever det som jobbigt att klicka på små knappar som är långt bort.
+				* Små ändringar i storlek hos små objekt spelar större roll än små ändringar i storlek hos stora objekt.
+				* Det samma gäller fär avståndet till objektet.
+				* Finns en massa konsekvenser av Fitts lag som är relevanta i interaktionsdesign.
+					ex. Magic corners.
+				
+				T = a + b*log2(D/W +1)
+				D = avstånd till målet.
+				W = målets bredd
+				a, b =  empiriskt bestämda konstanter som beror på styrdonet.
+				
+			* Hick-Hymans lag
+				JU FLER MÖJLIGHETER EN ANVÄNDARE HAR DESTO LÄNGRE TID TAR DET ATT VÄLJA.
+					* Ta bort onödiga valmöjligheter
+					* Dela upp i kategorier
+					
+					T = b*log2(n+1)
+					
+		* PROTOTYPING
+			Utforska och välja bland designidéer.
+		
+RIKTLINJER FÖR GRÄNSSNITTSUTFORMNING:
+	Ex. KNAPP:
+		Vilka lägen har en knapp?
+			* Se upp med trendkänsligt -  Kan ändras snabbt
+			* Plattforms-beroende
+			* Hur väl följer de generella designprinciper?
+	FEEDBACK:
+		Skall vara icke påträngande.
+		Undvika onödiga alerts.
+		
+	KONTEXTUELLA MENYER:
+		* En meny som plockas fram i viss situatation, ex. högerklick. 
+			Användaren måste dock veta om att den finns för att den inte syns hela tiden.
+	OLIKA TYPER AV GUIDELINES:
+		* Användbarhetsmål
+		* Eight golden rules of Interface design.
+		* De 5 E:na
+		* Nielsen och Molich's heuristics
+		
+		Är en form av "checklistor"
+			Användbarhetsmål:
+				• Effective to use
+				• Efficient to use
+				• Safe to use
+				• Have good utility
+				• Easy to learn
+				• Easy to remember how to use
+				
+			Eight Golden Rules of Interface design:
+				• Strive for consistency
+				• Cater to universal usability
+				• Offer informative feedback
+				• Design task flows to yield closure
+				• Prevent errors
+				• Permit easy reversal of actions
+				• Make users feel they are in control
+				• Minimize short-term memory load
+				
+			De fem E:na:
+				• Effective
+				• Efficient
+				• Engaging
+				• Error tolerant
+				• Easy to learn
+		
+			* Nielsen och Molich's heuristics:
+				1. Visibility of system status
+					Bör alltid hålla anvädare informerade om vad som pågår via feedback inom rimlig tid.
+					
+				2. Match between system and the real world
+					Systemet bör prata användarens språk, med ord och fraser som är kända för användaren.
+					
+				3. User control and freedom
+					Användaren väljer ofta funktioner av misstag och behöver då en markerad nödutgång, utan att behöva gå vidare. Ge möjlighet till att ångra och upprepa.
+					
+				4. Consistency and standards
+					Användaren skall inte behöva undra huruvida olika ord eller situationer betyder samma sak. Följ den aktuella plattformens konventioner.
+					
+				5. Error prevention
+					Undvik att fel överhuvudtaget uppstår. Leta upp och eliminera möjligheter att göra fel eller säg till så att användaren får tydlig information innan de utför handlingar som t.ex. är irreversibla.
+					
+				6. Recognition rather than recall
+					Minimera användarens minnesbelastning genom att göra föremål, aktiviteter och alternativ synliga. Användaren skall inte behöva komma ihåg information från en dialog till en annan.
+					
+				7. Flexibility and efficiency of use
+					Genvägar och kortkommandon som inte är synliga för nybörjaranvändaren kan öka hastigheten för expertanvändaren. På så sätt tillgodoses både experten och nybörjarens behov.
+					
+				8. Aesthetic and minimalist design
+					Dialoger bör inte innehålla information som är irrelevant och sällan behövs. Varje extra informationsenhet tävlar med de relevanta informationsenheterna och minskar deras relativa synlighet.
+					
+				9. Help users recognize, diagnose, and recover from errors
+					Fel meddelanden bör uttryckas på ett enkelt språk, indikera problemet noggrant och föreslå konstruktiva lösningar.
+				
+				10. Help and documentation
+					Det är bäst om systemet kan användas utan dokumentation, men ibland är det nödvändigt. Dokumentation bör vara enkel att hitta och fokuserad på användarens uppgift. Den bör systematiskt redogöra för konkreta steg som skall utföras och inte vara allt för omfattande.
+				
+UTVÄRDERING OCH ANALYS:
+	Metoder kan ha många olika egenskaper:
+		Kvantativa-Kvalitativa
+		Empiriska-Analytiska
+		Objektiva-Subjektiva
+		Explorativa-validerande
+		Grad av användarmedverkan
+		Formativ-summativ
+		
+	Det finns inte en metod som alltid är rätt.
+	Heuristic Evaluation:
+		* Utvärdering med hjälp av kända riktlinjer och designprinciper.
+			Expertmetod där slutanvändare inte involveras.
+		* Användartester:
+			* Man bör involvera användarna i testning genom hela designprocessen.
+				* Med olika tekniker:
+					Scenarion
+					Pappersprototyper
+					Datorprototyper
+					
+			* Kan göras i olika miljöer
+				I ett användbarhetslabb
+				I den verkliga kontexten
+					Måste testa hur systemet fungerar parallellt med andra system.
+						Olikheter i utformning av interaktionen mellan system.
+						Är det jobbigt för användaren att hoppa mellan systemen?
+						
+			Think Aloud:
+				Låt användaren prata högt medans de använder gränssnittet.
+				Avbryt inte användaren med frågor etc!
+				
+			Observationer.
+			
+			Intervjuer/fokusgrupper:
+				- Diskussioner kring parallella designförslag
+				- i samband med användartestning.
+				
+		
+							
+	
+	COGNITIVE WALKTHROUGH:
+		* Formulera tankar och mål hos en fiktiv person ska använda gränssnittet.
+			Många brister kan upptäckas på detta sätt.
+			Behöver inte involvera slutanvändare. Utgå istället från personas.
+		Att fråga sig under genomgång av en uppgift:
+			1. Kommer användaren att förstp vad de ska göra för att kunna utföra uppgiften?
+			2. Kommer användaren att förstå kontrollen? (Ex. menyn)
+			3. Kommer användaren att förstå vilken effekt interaktion med kontrollen har?
+			4. När operationen är utförd, kommer användaren att förstå den feekdbak hen får?
+		
+	PREDECTIVE HUMAN ERROR ANALYSIS:
+		Syftar till att försöka komma på så många fel som möjligt som kan uppstå i interaktionen mellan användaren och produkt/system.
+			- Vad kan användaren göra fel?
+			- Vad händer om användaren gör fel?
+			
+			Varje identifierad felhandling utvärderas utifrån:
+				1. Vad är orsaken till felet?
+				2. Vad blir konsekvenserna av felet?
+				3. Kommer användaren att kunna upptäcka felet?
+				4. Kommer användaren att kunna återhämta felet och i så fall hur?
+	
+		Kräver inte slutanvändaren.
+		
+		
+	GOMS:
+		* Goals
+			Målen användarna vill uppnå
+		* Operators
+			De handlingar och tankar som krävs för att uppnå målen.
+		* Methods
+			Inlärda procedurer.
+		* Selection rules
+			Används för att besluta vilken metod man ska välja.
+			
+	Keystroke level model:
+		Typ som GOMS fast mer detaljerat, mäter tid.
+	
+		Varken GOMS eller KLM kräver slutanvändare.
+
+	
+Designriktlinjer för orientering och navigering:
+	
+	* Gruppering är en viktig aspekt.
+	* Länkar ska vara beskrivande.
+	* Unika och beskrivande rubriker.
+	* Breadcrumbs.
+
+	ORIENTERING:
+		"Var är jag?"
+		Användaren skall lätt förstpå var man befinner sig i systemet.
+	NAVIGERING:
+		"Hur kommer jag dit jag vill?"
+		Användaren skall lätt hitta tillbaka eller till nya platser i systemet.
+	
+	THE F-SHAPED PATTERN:
+		Hur vi läser webbinnehåll
+		Nästan 70% av läsarens fokus ligger till vänster i vyn.
+	
+VISDOMSORD:
+	1: If something can go wrong, it will go wrong.
+		Dessutom svårt att förutse allt som en användare kan hitta på...
+	2: Less is more.
+		"The hardest part of design, especially consumer electronics, is keeping features out." - D. Norman
+	3: Kill your darlings
+		Alla prototyper/idéer är inte bra.
+	4: Think outside the box
+	
+	5: The devil is in the details
+		Många detaljer bidrar till helheten
+	6: Context is king
+		Systemet/produkten finns i ett sammanhang
