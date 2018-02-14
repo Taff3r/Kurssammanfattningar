@@ -1,1 +1,1 @@
-Kurssammanfattningar till C-programmet på LTH av Simon Tenggren
+Kurssammanfattningar till vissa kurser, C-programmet på LTH av Simon Tenggren
