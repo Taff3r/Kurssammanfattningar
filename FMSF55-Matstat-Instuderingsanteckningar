@@ -5,9 +5,11 @@ Fördelningar:
   Percentil för rektangelfördelning(a,b) är a + (b-a)/(100/percentil).
 
 Centrala Gränsvärdessatsen (CGS):
-    En summa av många oberoende händelelser kan approximeras med No(n*E(x), sqrt(n)*S(x)).
+    En summa av många oberoende händelser kan approximeras med No(n*E(x), sqrt(n)*S(x)).
 
 Modeller:
   Flera olika fördelningar kan användas i samma modell, ex kan något vara normalfördelat på ett visst sätt om något inte inträffar, och fördelat på ett annat sätt om något inträffar.
     Bra exempel tenta 18011 2c.
+  Om saker ska jämföras kan deras varians poolas, tänk på att det blir en annorlunda formel för konfidensintervallen.
+    Ex. 180111 3b.
     
