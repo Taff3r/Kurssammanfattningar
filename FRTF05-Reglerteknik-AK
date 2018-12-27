@@ -1,13 +1,13 @@
 Instuderingsanteckningar FRTF05 Reglerteknik AK:
 
 Definitioner:
+
   Styrbarhet:
     En tillståndsvektor x0 är styrbar om det finns en strysignal som överför tillståndsvektorn x från origo till x0 på ändlig tid.
     Ett system är styrbart om samtliga tillstånd är styrbara.
 
     Kontrollera styrbarhet genom att kontrollera att vektorn Ws = [B AB A²B ... A^(n-1)B] har n linjärt oberoende kolonner.
     D.v.s. att |Wc| != 0.
-
 
   Observerbarhet:
     En tillståndsvektor x0 != 0 är ICKE observerbar (tyst) om utsignalen y(t) = 0 då initialtillståndet är x(0) = x0 och insignalen
@@ -16,7 +16,8 @@ Definitioner:
     Studera om ett system är observerbart genom att kontrollera att vektorn Wo = [C CA CA²... CA^(n-1)]^T har n linjärt oberoende rader.
     D.v.s. att |Wo| != 0.
 
-
+    Robusthet:
+      Robusthet innebär att höja stabilitets marginalerna.
 
 Nyquistkurvor, bodediagram, och systemsvar:
 
@@ -29,12 +30,17 @@ Nyquistkurvor, bodediagram, och systemsvar:
     Visar förstärkningen och fas i de respektive diagrammen för samma frekvenser.
     Systemets ordning (graden på nämnarpolynomet/polpolynomet) kan bestämmas genom att kolla på vilken lutning som digrammet har samtidigit som fasen ändras.
       Ex. går lutningen på förstärkningen från 0 till -2 samtidigt som fasen går från 0* till -180* i hela systemet har systemet två poler i samma punkt.
+
     Pol -> lutning (k i kx + m) sänks med -1, fasen sänks med -90*.
     Nollställe -> lutning ökar med 1,fasen ökar med 90*.
+
     Resonanstoppar innebär att signalkomponenter kring denna frekvens förstärks.
     Lågfrekvensasymptoter med negativ lutning innebär att systemet innehåller en eller flera integratorer (-k = #integratorer),
     och har en en eller flera poler i origo.
 
+    Skärfrekvens (Wc) är där förstärkningen skär 1.
+    Amplitudmarginalen (Am) kan bestämmas genom att se hur långt under linjen |G(iw)| = 1 där frekvensen är -180* (-pi).
+    Fasmarginalen (Pm) kan bestämmas genom att hitta skärfrekvensen och sedan dra ett sträck till faskurvan. Avståndet mellan kurvan och -180* är fasmarginalen.
 
 
   Systemsvar:
@@ -46,3 +52,11 @@ Nyquistkurvor, bodediagram, och systemsvar:
     I bodediag. ses det som att fasen skjuter i höjden.
 
     För att få översläng och oscillilationer i stegsvar krävs det att det finns icke-reella poler i systemet, vilket i sin tur kräver att systemet minst är av ordning 2.
+
+
+Kompensering:
+  För att ELIMINERA stationära fel måste förstärkningen gå mot oändligheten för låga frekvenser.
+  För att MINSKA stationära fel räcker det med att man höjer förstärkningen för låga frekvenser.
+  För att göra systemet ROBUSTARE krävs att Am och/eller Pm höjs.
+  För att göra systemet SNABBARE måste skärfrekvensen ökas.
+  För att göra systemet LÅNGSAMMARE måste skärfrekvensen minskas.
