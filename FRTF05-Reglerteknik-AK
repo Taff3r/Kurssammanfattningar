@@ -1,0 +1,9 @@
+Instuderingsanteckningar FRTF05 Reglerteknik AK:
+
+Definitioner:
+  Styrbarhet:
+    En tillståndsvektor x0 är styrbar om det finns en strysignal som överför tillståndsvektorn x från origo till x0 på ändlig tid.
+    Ett system är styrbart om samtliga tillstånd är styrbara.
+
+    Kontrollera styrbarhet genom att kontrollera att vektorn Ws = [B AB A²B ... A^(n-1)B] har n linjärt oberoende kolonner.
+    
