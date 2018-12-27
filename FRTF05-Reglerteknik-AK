@@ -6,4 +6,43 @@ Definitioner:
     Ett system är styrbart om samtliga tillstånd är styrbara.
 
     Kontrollera styrbarhet genom att kontrollera att vektorn Ws = [B AB A²B ... A^(n-1)B] har n linjärt oberoende kolonner.
-    
+    D.v.s. att |Wc| != 0.
+
+
+  Observerbarhet:
+    En tillståndsvektor x0 != 0 är ICKE observerbar (tyst) om utsignalen y(t) = 0 då initialtillståndet är x(0) = x0 och insignalen
+    är u(t) = 0. Ett system är observerbart om det saknar icke observerbara tillstånd.
+
+    Studera om ett system är observerbart genom att kontrollera att vektorn Wo = [C CA CA²... CA^(n-1)]^T har n linjärt oberoende rader.
+    D.v.s. att |Wo| != 0.
+
+
+
+Nyquistkurvor, bodediagram, och systemsvar:
+
+  Nyquistkurvor:
+    Visar förstärkningen i en process i intervallet [0, inf]. Förstärkningen är avståndet från origo till kurvan. (|G(iw)|)
+    Visar även fasen genom att ta arg(G(iw)). (obs! negativt i den undre halvan)
+    Oftast kommer denna dämpas för höga frekvenser då de flesta processer är av lågpasskaraktär.
+
+  Bodediagram:
+    Visar förstärkningen och fas i de respektive diagrammen för samma frekvenser.
+    Systemets ordning (graden på nämnarpolynomet/polpolynomet) kan bestämmas genom att kolla på vilken lutning som digrammet har samtidigit som fasen ändras.
+      Ex. går lutningen på förstärkningen från 0 till -2 samtidigt som fasen går från 0* till -180* i hela systemet har systemet två poler i samma punkt.
+    Pol -> lutning (k i kx + m) sänks med -1, fasen sänks med -90*.
+    Nollställe -> lutning ökar med 1,fasen ökar med 90*.
+    Resonanstoppar innebär att signalkomponenter kring denna frekvens förstärks.
+    Lågfrekvensasymptoter med negativ lutning innebär att systemet innehåller en eller flera integratorer (-k = #integratorer),
+    och har en en eller flera poler i origo.
+
+
+
+  Systemsvar:
+    Oscillationer vid lägre frekvenser = varar en längre period.
+
+  Allmänt:
+    Kom ihåg att skilja på steg och implussvar!
+    En dödtid innebär att systemets fasförskjutning går mot -inf för höga frekvenser. I Nyquistkurvor ses detta som att fasen aldrig blir 0 dvs oändligt många svängningar.
+    I bodediag. ses det som att fasen skjuter i höjden.
+
+    För att få översläng och oscillilationer i stegsvar krävs det att det finns icke-reella poler i systemet, vilket i sin tur kräver att systemet minst är av ordning 2.
