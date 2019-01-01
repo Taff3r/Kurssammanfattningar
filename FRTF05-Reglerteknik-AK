@@ -61,6 +61,15 @@ Nyquistkurvor, bodediagram, och systemsvar:
 
     Om frekvensen är anged i rad/s måste fasmarginalen anges i radianer. Denna omvandlingen kan göras genom: vinkel * pi / 180
 
+Tillståndsbeskrivningar:
+  En tillståndsbeskrvning kan göras genom att studera överföringsfunktionen. Det finns tre olika tillståndsbeskrivningar: Diagonalformen, observerbara kanoniska formen, samt Styrbara kanoniska formen.
+  Styrbara och observerbara kanoniska formerna kan beskrivas genom att studera poler och nollställen. I formelsamlingen är bn den n:te koefficienten för nollställena och a,n den n:te polen.
+
+Slutna system:
+  För att system ska vara (asymtopiskt) stabilt måste samtliga poler vara i VHP.
+  Detta kontrolleras genom att produkten av koefficienterna framför s ska vara större än den enkla termen, samt att den enkla termen ska vara större än 0.
+    Ex.  Ett system med nämnaren: s³ + 3s² + 3s + 1 + 3K, så måste K uppfylla 1+3k > 0, samt att 1*3*3 > 1+3K <=> -1/3 < K < 8/3
+
 Återkoppling:
   Efter kompensering kan lr användas för att göra system snabbare/långsammare. Precis som en K regulator.
 Kompensering:
