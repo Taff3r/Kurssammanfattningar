@@ -17,7 +17,13 @@ Definitioner:
     D.v.s. att |Wo| != 0.
 
     Robusthet:
-      Robusthet innebär att höja stabilitets marginalerna.
+      Robusthet innebär att höja stabilitetsmarginalerna.
+
+    Kännslighetsfunktionen:
+      Kännslighetsfunktionen är ett mått på hur mycket last/mätstörningen förstärks relativt det öppna systemet.
+      Inversen av kännslighetfunktionen ges av avståndet från Nyquistkurvan till -1. Kännslighetsfunktionen ges av: S = 1/(1 + GpGr)
+      För att en störning ska dämpas måste punkten på Nyquistkurvan för motsvarande frekvens vara längre bort än 1 från -1. 1/|S| > 1 <=> |S| < 1
+
 
 Nyquistkurvor, bodediagram, och systemsvar:
 
@@ -53,7 +59,10 @@ Nyquistkurvor, bodediagram, och systemsvar:
 
     För att få översläng och oscillilationer i stegsvar krävs det att det finns icke-reella poler i systemet, vilket i sin tur kräver att systemet minst är av ordning 2.
 
+    Om frekvensen är anged i rad/s måste fasmarginalen anges i radianer. Denna omvandlingen kan göras genom: vinkel * pi / 180
 
+Återkoppling:
+  Efter kompensering kan lr användas för att göra system snabbare/långsammare. Precis som en K regulator.
 Kompensering:
   För att ELIMINERA stationära fel måste förstärkningen gå mot oändligheten för låga frekvenser.
   För att MINSKA stationära fel räcker det med att man höjer förstärkningen för låga frekvenser.
