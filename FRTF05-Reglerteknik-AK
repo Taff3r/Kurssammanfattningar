@@ -48,7 +48,6 @@ Nyquistkurvor, bodediagram, och systemsvar:
     Amplitudmarginalen (Am) kan bestämmas genom att se hur långt under linjen |G(iw)| = 1 där frekvensen är -180* (-pi).
     Fasmarginalen (Pm) kan bestämmas genom att hitta skärfrekvensen och sedan dra ett sträck till faskurvan. Avståndet mellan kurvan och -180* är fasmarginalen.
 
-
   Systemsvar:
     Oscillationer vid lägre frekvenser = varar en längre period.
 
@@ -60,6 +59,13 @@ Nyquistkurvor, bodediagram, och systemsvar:
     För att få översläng och oscillilationer i stegsvar krävs det att det finns icke-reella poler i systemet, vilket i sin tur kräver att systemet minst är av ordning 2.
 
     Om frekvensen är anged i rad/s måste fasmarginalen anges i radianer. Denna omvandlingen kan göras genom: vinkel * pi / 180
+
+Överföringsfunktioner:
+  Stabilitetsanalys:
+    Om en av koefficienterna i nämnaren till överföringsfunktionen är systemet instabilt. (an < 0)
+    För system av grad < 3 räcker det med att samtliga koefficienterna positivt (polerna ligger i VHP)
+    För  system av grad > 2 måste även koefficienterna uppfylla a1a2 > a3 uppfyllas.
+    För system > 3 måste generellt datorhjälpmedel användas för att avgöra om polerna ligger i VHP. 
 
 Tillståndsbeskrivningar:
   En tillståndsbeskrvning kan göras genom att studera överföringsfunktionen. Det finns tre olika tillståndsbeskrivningar: Diagonalformen, observerbara kanoniska formen, samt Styrbara kanoniska formen.
