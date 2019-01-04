@@ -2,6 +2,10 @@ Instuderingsanteckningar FRTF05 Reglerteknik AK:
 
 Definitioner:
 
+
+  Kretsöverföringsfunktionen = G0 = Gp * Gr
+  Slutnasystemet: Gcl = GpGr/1+GpGr
+
   Styrbarhet:
     En tillståndsvektor x0 är styrbar om det finns en strysignal som överför tillståndsvektorn x från origo till x0 på ändlig tid.
     Ett system är styrbart om samtliga tillstånd är styrbara.
@@ -66,6 +70,8 @@ Nyquistkurvor, bodediagram, och systemsvar:
     Om frekvensen är anged i rad/s måste fasmarginalen anges i radianer. Denna omvandlingen kan göras genom: vinkel * pi / 180
 
 Överföringsfunktioner:
+  Asymptotisk stabilitet är en starkare definition än stabilititet.
+
   Stabilitetsanalys:
     Om en av koefficienterna i nämnaren till överföringsfunktionen är systemet instabilt. (an < 0)
     För system av grad < 3 räcker det med att samtliga koefficienterna positivt (polerna ligger i VHP)
