@@ -95,3 +95,10 @@ Kompensering:
   För att göra systemet ROBUSTARE krävs att Am och/eller Pm höjs.
   För att göra systemet SNABBARE måste skärfrekvensen ökas.
   För att göra systemet LÅNGSAMMARE måste skärfrekvensen minskas.
+
+  Länkar kan antingen vara fasavancerande (Öka hastigheten på systemet) eller fasretaraderande(Sänka hastigheten).
+  Genom att bestämma den nya skärfrekvensen först kan man bestämma hur mycket man ska ändra fasmarginalen (Om man vill det).
+  Använd de nya marginalerna för att bestämma b och N.
+  N = 0.1 * Pm (Enl formelsamlingen?)
+  Efter att ha gjort så se till att |GkG0| = 1 för att bestämma Kk.
+   
