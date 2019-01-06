@@ -13,6 +13,9 @@ Definitioner:
     Kontrollera styrbarhet genom att kontrollera att vektorn Ws = [B AB A²B ... A^(n-1)B] har n linjärt oberoende kolonner.
     D.v.s. att |Wc| != 0.
 
+    När ett system går mot en punkt a där det inte är styrbart kommer det att krävas oändligt mycket styrsignal för att styrasystemet, dvs systemet är omöjligt att kontrollera.
+    lim x -> a |u| = inf.
+
   Observerbarhet:
     En tillståndsvektor x0 != 0 är ICKE observerbar (tyst) om utsignalen y(t) = 0 då initialtillståndet är x(0) = x0 och insignalen
     är u(t) = 0. Ett system är observerbart om det saknar icke observerbara tillstånd.
@@ -101,4 +104,12 @@ Kompensering:
   Använd de nya marginalerna för att bestämma b och N.
   N = 0.1 * Pm (Enl formelsamlingen?)
   Efter att ha gjort så se till att |GkG0| = 1 för att bestämma Kk.
-   
+
+Frekvenssvar:
+  En insignal u(t) = Asin(wt + p) kommer få utsignal y(t) = A*|G(iw)|sin(wt + (p + arg(G(iw)))).
+  
+Zieger-Nichol's frekvenssvarsmetod:
+
+  1. Hitta frekvensen som ger resonans, antingen genom att leta efter en resonanstopp eller genom att se var fasen skiftas 90 grader.
+  2. K0 = |G(Woi)| / Wo (Tills jag hittar något som tyder på något annat?)
+  3. Använd formelsamlingen för att ta reda på dina regulatorparametrar.
