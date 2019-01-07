@@ -30,7 +30,8 @@ Definitioner:
       Kännslighetsfunktionen är ett mått på hur mycket last/mätstörningen förstärks relativt det öppna systemet.
       Inversen av kännslighetfunktionen ges av avståndet från Nyquistkurvan till -1. Kännslighetsfunktionen ges av: S = 1/(1 + GpGr)
       För att en störning ska dämpas måste punkten på Nyquistkurvan för motsvarande frekvens vara längre bort än 1 från -1. 1/|S| > 1 <=> |S| < 1
-
+      Man kan bestämma Am genom att hitta den maximala kännsligheten, Ms, ta |1/Ms| för att hitta det minsta avståndet till -1. Detta kommer ge ett intervall som kurvan inte kan skära den negativa reela axeln. 
+      Ex. Om |1/Ms| = 0.67 ger ett intervall på [-1, -0.33] där kurvan inte kan skära axeln, vilket ger att Am är minst 1/0.33 = 3 = Am.
 
 Nyquistkurvor, bodediagram, och systemsvar:
 
