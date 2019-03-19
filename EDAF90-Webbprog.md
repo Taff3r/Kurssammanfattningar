@@ -16,25 +16,25 @@ All variables can be declerade as either 'var', 'let', or 'const'. Since ES6, do
 All variables have dynamic types, which means arrays can contain items of different types. Object properties can be added and deleted.
 
 This also leads to black-magic such as:
-~~~~
+```javascript
 let a = 1;
 
 a = a + '1';
 
 a // '11'
-~~~~
+```
 
 ### Objects and Initializers:
 
 Create objects using:
-~~~~
+```javascript
 let a  = {
    string: "string",
    number: 1,
    boolean: true,
    null: null
 };
-~~~~
+```
 
 Objects properties can be both accessed using dot notation:
 ~~~~
@@ -47,7 +47,7 @@ a[propertyName]
 
 The spread operator '...' can be used to open objects and pick and copy properties from objects, especially if you want to copy objects that are immutable.
 
-~~~~
+```javascript
 let a = {
    x: 100,
    y: 200,
@@ -60,37 +60,34 @@ let b = {
 };
 
 b // {b: "hello world", x: 100, y: 200, a: "I am a point in 2D, whoop de doo"}
-~~~~ 
+```
 
 ### JS modules and imports
 
 With ES6 you can import stuff from other .js files using the following syntax:
 
-~~~~
+```javascript
 import a from '.\iExportData';
-~~~~
-
+```
 Module imports can be done using:
 
-~~~~
+```javascript
 const app = require('express');
-~~~~
-
+```
 ### Hoisting 
 
 All declartions are moved to the beginning of their respective scopes. Functions go first, followed by variables. Note! Function expressions are **NOT** hoisted. 
 
-~~~~
+```javascript
 let foo = function bar(){
    ...
 };
-~~~~
-
+```
 ### Functions
 
 Functions are values and can be passed around as such.
 
-~~~~
+```javascript
 let a = function b(){
    console.log('c');
 }
@@ -102,7 +99,8 @@ let b = {
 
 b // {d: "example", a: function b()}
 b.a() // Logs 'c' to the console.
-~~~~
+
+```
 ## HTML
 
 Describes and defines the *content* of the webpage.
