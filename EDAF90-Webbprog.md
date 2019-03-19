@@ -78,7 +78,7 @@ const app = require('express');
 
 ### Hoisting 
 
-All declertions are moved to the beginning of their respectivescopes. Functions go first, followed by variables. Variables are also split up in declration and assignment. Note! Function expressions are **NOT** hoisted. 
+All declartions are moved to the beginning of their respective scopes. Functions go first, followed by variables. Note! Function expressions are **NOT** hoisted. 
 
 ~~~~
 let foo = function bar(){
@@ -136,6 +136,79 @@ Describes and the *appearance/presentation* of the content.
 <img src = "https://images-na.ssl-images-amazon.com/images/I/61i-Tg4jpZL._SL1205_.jpg" />
 
 It is really annoying to use, luckily some companies have developed alternatives. 
+
+#### Bootstrap
+
+Bootstrap works by importing stylesheets by linking to them in the header.
+Later the classes from the stylesheets can be used, such as in the examplebelow.
+
+```html
+<head>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+</head>
+<body>
+   <div class="jumbotron">
+      <h1 class="display-4"> Hello There! </h1>
+   </div>
+   <h2> GENERAL KENOBI! </h2>
+</body>
+```
+#### Materials
+
+Materials can be instlled through npm. And adds new component which can beused in a manner similar to normal html elements.
+
+## Event handling
+There are many different events that can be handled. eventListeners can be added in multiple manners, but most commonly is:
+
+~~~~
+```html
+<button onclick="alert("DONT TOUCH ME")"> DONT YOU DARE </button>
+```
+~~~~
+or in JS:
+
+~~~~
+```javascript
+
+let onClick = function(){
+   console.log("Hello World!");
+};
+
+let button = document.getElementById("btn");
+button.addEventListener("click", onClick);
+
+```
+~~~~
+
+## Bubbling and capturing
+When we have multiple eventlistener nested into each other like in the example below:
+~~~~
+```html
+<form onclick="alert('form')">FORM
+  <div onclick="alert('div')">DIV
+    <p onclick="alert('p')">P</p>
+  </div>
+</form>
+
+```
+~~~~
+
+The events will "bubble up", so even you pressed the p-element all its parent elements will also run their onClick-events.
+You can stop bubbling by calling event.stopPropagation().
+
+Capturing is the "reverse" of bubbling, usually capturing is set to false by default when declaring the eventlistener. Capturing can be enabled by setting an extra option in the addEventListener function. See example below.
+
+~~~~
+button.addEventListener("click", onClick, {capture: true});
+~~~~
+
+
+
+#### event.target
+A parent can always get information on what exactly happend. By using event.target we can get the origin of the event.
+
+
+###
 
 ## React
 
