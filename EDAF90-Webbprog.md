@@ -133,11 +133,9 @@ let img = document.getElementById("catPic");
 
 Describes and the *appearance/presentation* of the content.
 
-[![Foo](hhttps://images-na.ssl-images-amazon.com/images/I/61i-Tg4jpZL._SL1205_.jpg)]
-(CSS is annoying to use.)
+<img src = "https://images-na.ssl-images-amazon.com/images/I/61i-Tg4jpZL._SL1205_.jpg" />
 
-
-
+It is really annoying to use, luckily some companies have developed alternatives. 
 
 ## React
 
