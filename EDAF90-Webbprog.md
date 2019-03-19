@@ -28,7 +28,12 @@ a // '11'
 
 Create objects using:
 ~~~~
-let a  = {};
+let a  = {
+   string: "string",
+   number: 1,
+   boolean: true,
+   null: null
+};
 ~~~~
 
 Objects properties can be both accessed using dot notation:
@@ -102,9 +107,37 @@ b.a() // Logs 'c' to the console.
 
 Describes and defines the *content* of the webpage.
 
+### Elements
+Elements are defined by different tags.
+Such as:
+* <hx> Header. Where is a number, or nothing.  
+* <p> Paragraph. 
+* <table> Table.
+* <ul> Unordered list.
+* <li> List item in list.
+
+### The DOM
+
+The DOM (Document Object Model) is a programming API for HTML and XML documents. It defines the logical structure of documents. "Document" is used broadly. Everything in the DOM can be modified, changed, deleted, or added.
+
+The DOM is structured much like a tree much like the HTML code, or rather a "forest" since there can be more than one tree.
+
+Elements from the DOM can be accessed in JavaScript in many different manners. Here is an example:
+ 
+~~~~
+let img = document.getElementById("catPic");
+~~~~
+
+
 ## CSS
 
 Describes and the *appearance/presentation* of the content.
+
+[![Foo](hhttps://images-na.ssl-images-amazon.com/images/I/61i-Tg4jpZL._SL1205_.jpg)]
+(CSS is annoying to use.)
+
+
+
 
 ## React
 
