@@ -10,6 +10,7 @@
    - undefined
    - object
    - symbol
+
 All variables can be declerade as either 'var', 'let', or 'const'. Since ES6, don't use var, ever. Just don't.
 
 All variables have dynamic types, which means arrays can contain items of different types. Object properties can be added and deleted.
@@ -18,7 +19,7 @@ This also leads to black-magic such as:
 ~~~~
 let a = 1;
 
-a = 1 + '1';
+a = a + '1';
 
 a // '11'
 ~~~~
@@ -26,18 +27,22 @@ a // '11'
 ### Objects and Initializers:
 
 Create objects using:
-'let a  = {};'
+~~~~
+let a  = {};
+~~~~
 
 Objects properties can be both accessed using dot notation:
-'a.propertyName'
+~~~~
+a.propertyName
+~~~~
 or using bracket notation:
-'a[propertyName]'
-
+~~~~
+a[propertyName]
+~~~~
 
 The spread operator '...' can be used to open objects and pick and copy properties from objects, especially if you want to copy objects that are immutable.
 
 ~~~~
-
 let a = {
    x: 100,
    y: 200,
@@ -50,7 +55,6 @@ let b = {
 };
 
 b // {b: "hello world", x: 100, y: 200, a: "I am a point in 2D, whoop de doo"}
-
 ~~~~ 
 
 ### JS modules and imports
@@ -63,7 +67,9 @@ import a from '.\iExportData';
 
 Module imports can be done using:
 
-'const app = require('express');'
+~~~~
+const app = require('express');
+~~~~
 
 ### Hoisting 
 
