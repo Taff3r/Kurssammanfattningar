@@ -193,15 +193,138 @@ Capturing is the "reverse" of bubbling, usually capturing is set to false by def
 button.addEventListener("click", onClick, {capture: true});
 ```
 
-
 #### event.target
 A parent can always get information on what exactly happend. By using event.target we can get the origin of the event.
 
-
-###
-
 ## React
+React is structured kind of like a tree. Where the root of the tree is theroot component. Children (branches) are added as components. All components include a render function where the HTML of the component is set.
+A child is added in the render function of their parent, and the childrens render functions are run almost recursivly.
+Example:
 
+```javascript
+// This is the parent component.
+const mayorKey = "you smart";
+const anotherOne = "you loyal";
+
+render(){
+   <ChildComponent prop = {mayorKey}/>
+   <AnotherChild iAmAlsoprop = {anotherOne} />
+}
+```
+The render function is run whenever the `state` of the component is updated.
+
+### State and props
+
+#### Props
+Props is a way of passing data from a parent from the parent component.
+As seen in the example above the prop "prop" is passed from the parent component. The props are passed as an argument into the component's constructor, and later passed to the React.Component superclass. See example below:
+```javascript
+import React,  {Component} from "react";
+
+export default class ChildComponent extends Component{
+   constructor(props){
+      super(props);
+      // More constructor code
+   }
+   ...
+}
+```
+
+Props are an essential part of passing data between components in React, which will be explained later.
+
+State is a special object that contains that has the special function that every time it is updated the render function of the component whos state was updated is run. State needs to be updated using a special function called setState. Here is an example of updating a state to a default:
+
+```javascript
+resetForm(){
+   let currState = this.state;
+   Object.keys(currState).map(k => currState[k] = false);
+   this.setState(currState);
+}
+```
+### JSX
+React uses JSX to easily combine HTML and JavaScript, which allows for expressions such as:
+
+```javascript
+const element = <p> You are a bold one! </p>;
+```
+This simplifies adding HTML content to the render functions.
+Take for instance adding an unknown amount of list items to a list in html, it is not possible to hard code these into the HTML code, but since the structure of the items we can create an array of items which can be added to the render function without having to hard code HTML. See example below:
+
+```javascript
+render(){
+   const usersNamedJames = fetch("https://localhost:3000/users").then(result => result.json()).then(r => r.filter(u => u.firstName === "James"));
+   let list = usersNamedJames.map(u => <li> {u} </li>);
+   return{
+      <ul>
+         {list}   
+      </ul>
+   }
+}
+```
+Which for example could be rendered as the following HTML:
+
+```html
+<ul>
+   <li> James Franco </li>
+   <li> James Dean </li>
+   <li> James McAvoy </li>
+   <li> James Hetfield </li>
+<ul> 
+```
+JSX code can be returned just as any other value.
+
+```javascript
+function makeIntoListItem(text){
+   return <li> {text} </li>
+}
+```
+Can even return entire Components. NOTE! Capitalization is required on user-defined components!
+
+```javascript
+function createComp(prop){
+   return <StillFlying halfAShip = {prop} />
+}
+```
+### Passing/Sharing data between react components
+
+As we have seen earlier parent components can pass data to children using props. But how can children pass data to their parents?
+The answer is yet again to use props!
+By passing a callback function as a prop to the components and binding it to the parent component, later we can call the function through the props object. Ex:
+
+ ```javascript export default class ParentComp extends Component {
+   constructor(props){
+      super(props);
+      this.updateParentData = this.updateParentData.bind(this);
+   }
+
+   updateParentData(data){
+      this.setState({myData: data});
+   }
+
+   render(){
+      return(
+         <div>
+            <ChildComp callback = {(data) => this.updateParentData(data)} />
+         </div>
+      )
+   }
+} 
+```
+And in the child component data can now be passed to the parent component:
+
+```javascript
+export default class ChildComp extends Component {
+   constructor(props){
+      super(props);
+      this.passData = this.passData.bind(this);
+   }
+   
+   passData(e){
+      this.props.callback(e.target.value);
+   }
+}
+```
+ 
 ## Angular
 
 ## Web specific 
