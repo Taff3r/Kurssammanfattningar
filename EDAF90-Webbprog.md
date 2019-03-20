@@ -324,7 +324,58 @@ export default class ChildComp extends Component {
    }
 }
 ```
- 
+### Component lifecycles
+
+In applications with many components it can be essential to free up resources taken by the components when they are destroyed.
+Enter lifescycle functions!
+
+There is two special functions that run when a component is created and destroyed respectivly. These functions are `componentDidMount()` and componentWillUnmount()`.
+
+#### Mounting/Creating
+
+When mounting the methods will be ran in the following order:
+* `constructor()`
+* `static gerDerivedStateFromProps()`
+* `render()`
+* `componentDidMount()`
+
+`componentDidMount()` will be ran everytime that the component will be rendered, so even if you have three different components of the same type since the components will act independently of each other. 
+
+### Unmounting 
+
+The only method that will run when unmounting a component from the DOM is `componentWillUnmount()`.
+
+## Routing 
+
+If you're building a single page application (SPA). You want to change the content on the page, but without redirecting to another page.
+Using routers we can change the components in the application. 
+
+Routing doesn't come natively with React and needs to be installed using npm.
+
+The `<Router>` component will wrap around `<Link>` components and `<Route>` components. 
+See example below.
+
+```javascript
+<Router>
+   <div> 
+      <ul>
+         <li>
+            <Link to="/cookies"> View our selection of cookies </Link>
+         </li>
+         <li>
+            <Link to="/icecream"> View our selection of ice cream </Link>
+         </li>
+         <li>
+            <Link to="/AR15s"> View our selection of AR15s </Link> 
+         </li>
+      </ul>
+   </div>
+
+   <Route path="/cookies" component="{CookieViewer}"/>
+   <Route path="/icecream" component="{IcecreamViewer}"/>
+   <Route path="/AR15s" component="{AddCustomerInfoToFBIList}"/>
+</Router>
+```
 ## Angular
 
 ## Web specific 
