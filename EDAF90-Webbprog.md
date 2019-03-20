@@ -355,7 +355,7 @@ Routing doesn't come natively with React and needs to be installed using npm.
 The `<Router>` component will wrap around `<Link>` components and `<Route>` components. 
 See example below.
 
-```javascript
+```html
 <Router>
    <div> 
       <ul>
