@@ -101,6 +101,43 @@ b // {d: "example", a: function b()}
 b.a() // Logs 'c' to the console.
 
 ```
+
+### Promises
+Promises is proxy of value that is not necessarilly known when the Promise is created.
+Promises allows you to associate handling of the eventual success value of the calls. This allows async methods return values like synchrouns methods. But instead of immediately reutring the final value, the async function can return a `Promise` to return the value some time in the future.
+
+#### .then()
+
+Promises have the `.then()` function which can be called. `then()` takes a callback function as a parameter, which will run when the promise has resolved to its value.
+
+Ex:
+
+```javascript
+// async functions returns a Promise
+async function asyncFunc(){
+  return "value";
+}
+
+asyncFunc().then(r => console.log(r)); // This logs value to the console when the promise resolves.
+```
+
+#### Promise.all()
+`Promise.all()` takes an array of `Promise`s or other values, which eventually resolves to a single promise when all the Promises in the array have resolved.
+The single promise that is returned from will resolve to the array of the resolved values. Which you can handle as you wish.
+Example:
+
+```javascript
+async function asyncFunc(){
+  return "value";
+}
+
+Promise.all([asyncFunc(), asyncFunc(), asyncFunc()]).then(arr => arr.forEach(e => console.log(e))); // logs: value, value, value to the console.
+```
+### async/await
+
+Functions starting with the async keyword work a litte differently than other functions, but are written mostly the same. First of all, async functions all return all a `Promise`, meaning that the value inside an async function is wrapped inside a `Promise` when returned.
+
+
 ## HTML
 
 Describes and defines the *content* of the webpage.
