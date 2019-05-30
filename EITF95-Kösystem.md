@@ -42,3 +42,14 @@ P(Lämnar genom X) = Genomströming genom X / Total genomströmning
 	
 	Ex. Med två betjänare och två köplatser:
 	E(Kunder/tid) = 2mu * (p2 + p3 + p4) + mu * p1
+
+### Sannolikhet att en kund som inte spärras blir betjänad:
+
+	Lambda,serv / Lambda,eff = P(Betjänad som inte blev spärrad)
+	Där Lambda,serv = Summan av Total mu vid tillstånd vid alla tillstånd k där betjänare jobbar.
+	
+Ex. 2 betjänare, köplats, där båda har mu = 5
+	Lambda, serv = 5p1 + 10p2 + 10p3
+
+	
+
