@@ -9,11 +9,11 @@ T = (N1 + N2 + ... + Nk ) / Lambdatot
 ## Loop-back system
 
 Lös ut samtliga lambda i  ett ekvationssystem i termer av de originella lambda. 
+
 	Ex.
 	L1 = L + 0.8L2 + 0.5L3
 	L2 = 0.5L1
 	L3 = 0.5L3
-	
 	Ger:
 	L1 = (20/7)L
 	L2 = (10/7)L
