@@ -1,5 +1,3 @@
-# Könät
-
 ## Little's sats:
 	E(N), i allmänhet, där k = antal köplatser + antal bejtänare
 
@@ -8,6 +6,9 @@
 	E(N) = Lambdaeff * E(T), Lambdaeff = antal kunder som kommer igenom systemet.
 
 I med def. av Lambdaeff ovan, kan INTE Little's sats användas om en kund skulle hoppa av i systemet, ex. av att den skulle bli trött på att vänta i kön.
+
+
+# Könät
 
 ### Snitt kunder i en nod:
 	
