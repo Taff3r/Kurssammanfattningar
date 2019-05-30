@@ -33,10 +33,14 @@ Lös ut samtliga lambda i  ett ekvationssystem i termer av de originella lambda.
 	L3 = (10/7)L
 
 ### Sannolikheten att en kund lämnar i en specifik utgång från systemet (Ingen spärr):
-P(Lämnar genom X) = Genomströming genom X / Total genomströmning
+
+	P(Lämnar genom X) = Genomströming genom X / Total genomströmning
 
 
 ## Annat:
+### Idleperiod:
+
+	E(Idle) = 1/Ankomstintensitet i tillstånd 0 = 1/Lambda
 
 ### Medelantal kunder som blir betjänade per tidsenhet:
 	
