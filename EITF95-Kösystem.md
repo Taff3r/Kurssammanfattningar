@@ -7,6 +7,24 @@
 
 I med def. av Lambdaeff ovan, kan INTE Little's sats användas om en kund skulle hoppa av i systemet, ex. av att den skulle bli trött på att vänta i kön.
 
+
+### Betjänade kunder / tid:
+
+	E(Kund/tid) = Lamda, eff
+
+### Snitt kunder i betjänare:
+
+	E(N,s) = rho
+
+### TIPS:
+
+Little's sats kan också användas för att räkna ut hur lång tid det i snitt det spenderas i en buffert:
+	
+	Ex. 2 köplatser, 2 betjänare:
+	E(N,b) = 1*p,3 + 2*p,4
+
+
+	
 # M/G/1-system:
 
 ### Kriterier:
