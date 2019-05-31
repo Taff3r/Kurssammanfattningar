@@ -3,7 +3,7 @@
 
 	E(N) = p1 + p2 + p3 + ... + pk	
 	
-	E(N) = Lambdaeff * E(T), Lambdaeff = antal kunder som kommer igenom systemet, dvs lambda,tot * (1-P(Spärr)).
+	E(N) = Lambda, eff * E(T), Lambdaeff = antal kunder som kommer igenom systemet.
 
 I med def. av Lambdaeff ovan, kan INTE Little's sats användas om en kund skulle hoppa av i systemet, ex. av att den skulle bli trött på att vänta i kön.
 
