@@ -7,6 +7,10 @@
 
 I med def. av Lambdaeff ovan, kan INTE Little's sats användas om en kund skulle hoppa av i systemet, ex. av att den skulle bli trött på att vänta i kön.
 
+### Z-transformer:
+
+Första deriveringen av Z-transformen är medelvärdet, där z => 1
+Andra derivering av Z-transformen ger andramomentet, där z => 1
 
 ### Betjänade kunder / tid:
 
@@ -33,6 +37,13 @@ Little's sats kan också användas för att räkna ut hur lång tid det i snitt 
 2. Det finns en betjänare och betjäningstiden har en godtycklig men känd fördelning.
 3. Det finns en oändligt många buffertplatser.
 
+
+### LaPlace-transformer:
+
+Första deriveringen av LaPlacetransformen är medelvärdet, där s => 0.
+Andra derivering av LaPlacetransformen ger andramomentet, där s => 0.
+
+OBS! Ignorera om det blir negativt.
 # Könät
 
 ### Snitt kunder i en nod:
@@ -76,7 +87,7 @@ Således blir:
 
 	E(Antal betjäningar) = Sum, 1->k (Lambda, k/Lambda, tot)
 
-### Total tid i medel spenderad i en nod:
+### Total tid i medel spenderad i en nod k:
 	
 	(Lambda, k / Tot. Lambda in) * E(T,k) = E(T,k_tot)
 
