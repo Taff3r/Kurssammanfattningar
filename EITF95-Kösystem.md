@@ -12,14 +12,21 @@ I med def. av Lambdaeff ovan, kan INTE Little's sats användas om en kund skulle
 
 ### Snitt kunder i en nod:
 	
-	N = rho/(1-rho)
+	N,k = rho,k/(1-rho,k), rho,k = lambda,k / mu,k 
 
 ### Snitt tid spenderat i ett könät:
 
 	T = (N1 + N2 + ... + Nk ) / Lambdatot
 
+### Snitt tid spenderat i en nod i ett könät:
 
-## Loop-back system
+	E(T,k) = E(N,k) / Lambda, k (Little's sats)
+
+### Tips:
+
+När ett könät får väldigt stor input kan det vara bra att rita om systemet där de ytteresta noderna skrivs om som deras output. Om det inte finns en spärrr i de yttersta noderna.
+
+# Loop-back system
 
 Lös ut samtliga lambda i  ett ekvationssystem i termer av de originella lambda. 
 
@@ -36,6 +43,17 @@ Lös ut samtliga lambda i  ett ekvationssystem i termer av de originella lambda.
 
 	P(Lämnar genom X) = Genomströming genom X / Total genomströmning
 
+### Antal besök i en nod k (Ingen spärr):
+	
+	E(Antal besök i k) = Lambda, k / Lambda, tot
+
+Således blir:
+
+	E(Antal betjäningar) = Sum, 1->k (Lambda, k/Lambda, tot)
+
+### Total tid i medel spenderad i en nod:
+	
+	(Lambda, k / Tot. Lambda in) * E(T,k) = E(T,k_tot)
 
 ## Annat:
 ### Idleperiod:
