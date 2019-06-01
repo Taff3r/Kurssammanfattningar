@@ -91,6 +91,12 @@ Således blir:
 	
 	(Lambda, k / Tot. Lambda in) * E(T,k) = E(T,k_tot)
 
+### Medeltiden som en godt. kund spenderar i ett kösystem:
+Medeltiden som en godt. kund spenderar i ett kösystem är medelbetjäningstiden multiplicerat med medelantalet gånger kunden passerar kösystemet.
+
+### Medeltiden spenderat i en väg i ett könät:
+
+	(Lambda, väg / Summan av samtliga möjlig vägar)* (E(T, första noden på vägen) + E(T, andra noden...) + ... ) = E(T, väg)
 ## Annat:
 ### Idleperiod:
 
@@ -109,5 +115,8 @@ Således blir:
 Ex. 2 betjänare, köplats, där båda har mu = 5
 	Lambda, serv = 5p1 + 10p2 + 10p3
 
-	
+### Erlangsystem:
 
+Ett Erlangsystem är ett system som endast består av betjänare.
+Då är "betjänare" definerat som ett ställe där en kund kan komma ur systemet.
+Ex. en kö som kunder kan lämna med samma intensitet som betjänaren/na kan modelleras som ett Erlangsystem.
