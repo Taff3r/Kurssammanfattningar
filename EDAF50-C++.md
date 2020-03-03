@@ -1,3 +1,47 @@
+# Pointers and references
+A pointer is simply an integer that represents a location in the memory. A reference is simply the value at that address and can accessed through a pointer using the `*` operator of a pointer.
+Ex. 
+```c++
+int* iPtr = 0; // Same as NULL / nullptr
+int ten   = 10;
+iPtr = &ten; // Set the value of iPtr to the ADDRESS of ten
+*iPtr = 11; // Set the value at the address 
+(*iPtr)++; // Same as above but with ++ operator
+
+std::cout << *iPtr << std::endl; // 12
+std::cout << ten << std::endl; // 12
+std::cout << &ten << std::endl; // Some (hopefully) random address.
+std::cout << iPtr << std::endl; // Same as above 
+// Therefor we can do the following
+
+bool adrSame = &ten == iPtr;
+std::cout << adrSame << std::endl; // true / 1
+```
+
+You can also pass references and pointers to functions.
+
+```c++
+// The two following functions are equivalent in function.
+void changeValueOfPointer(int* iPtr){
+    *iPtr = 3; // Set the VALUE of the ADDRESS that the pointer points to.
+}
+
+void changeUsingReference(int& ref){
+    ref = 4; // Change the VALUE
+}
+
+int main(){
+    int v = 1;
+    int* iPtr = &v;
+    changeValueUsingPointer(iPtr); // Send in an ADDRESS / POINTER
+    std::cout << *iPtr << std::endl; // 3
+    changeUsingReference(*iPtr); // Send in a VALUE to be changed.
+    std::cout << *iPtr << std::endl; // 4
+    std::cout << ++v << << std::endl; // 5
+}
+```
+
+When passing objects as parameters you should pass its **reference** for expected behaviour.
 # Allocating memory
 "You're not alive if you're not allocating memory"
 
@@ -18,7 +62,7 @@ There is also a difference between allocating a pointer to a variable/object and
 An array has to be deleted using the `delete[]` operator.
 ```c++
 char* pChar = new char;
-char[]* string = new char[5];
+char* string[] = new char[5];
 
 // some time later...
 
@@ -130,9 +174,19 @@ public:
 #include <iostream>
 
 void Foo:printVar() {
+    // `this` is pointer therfore -> operator can be used.
     std::cout << this->coolVar << std::endl;
 }
 ```
+## const 
+The keyword `const` can be applied in multiple ways in C++. In the usual way, similar to JS/Java where it is a promise to not change the variable declared `const`.
+`const` can also be applied to parameters to functions, also giving a promise not to change the contents of the parameter. Therefor some operations cannot be done on the objects/variables that **can** change the objects contents. Such as ++/-- and [] or other *functions* that are not declared `const`.
+
+Functions in classes can also be declared `const` they make it impossible to change the internal state of the object. But can be used to make sure that get()-like functions aren't used in a bad manner.
+
+
+
+
 
 
 
