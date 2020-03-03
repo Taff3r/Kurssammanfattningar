@@ -1,6 +1,8 @@
 # Allocating memory
 "You're not alive if you're not allocating memory"
+
 Dynamic memory allocation in C++ is done by using the `new` keyword. (Similar to malloc in C) and returns a `pointer` to a position on the **heap**.
+
 Ex.:
 ```c++
 // Notice the asterisk
@@ -13,7 +15,7 @@ All memory allocated on the stack must be **explicitly** removed with the `delet
 delete pChar;
 ```
 There is also a difference between allocating a pointer to a variable/object and an array when deleteing.
-An array has to be deletedk
+An array has to be deleted using the `delete[]` operator.
 ```c++
 char* pChar = new char;
 char[]* string = new char[5];
@@ -28,6 +30,7 @@ When possible instead use the `unique_pointer` and `shared_pointer` functions in
 These "smart" pointers automatically deletes the object to which it points to. 
 ## unique_pointer
 A `unique_pointer` has single ownership of the pointer. Use them when the resource is not shared by muliple objects.
+
 Ex. : 
 ```c++
 # include <memory>
@@ -43,6 +46,32 @@ A shared pointer is a smart pointer that is automatically deleted when not used.
 
 ### Destructors
 Objects that own a resource should always implement a `destructor`. So when a smart pointer deletes itself it calls the destructor of that object. If the objects owns other pointers it is **important** that in the destructor deletes those resources. **Other wise we have a memory leak!**
+
+Ideally a recursive call can be used when deleting resources.
+Ex. :
+```c++
+class LinkedList {
+private:
+    template <typename T>
+    struct Node {
+        T val;
+        Node* next;
+        // Constructor
+        Node(T val, Node* next) : next(next), val(val){};
+        // Destructor. NOTE THE DELETION.
+        ~Node() {
+            delete next;
+        }
+    };
+    Node* head;
+public:
+    // Other functions
+    // DESTRUCTOR. NOTE CALLING THE DELETE ON HEAD WILL DELETE HEADS->next which will delete next->next and so on until null is reached;
+    ~Node(){
+        delete head;
+    }
+};
+```
 
 # Include-guards
 Header files can at most be included once in accordance to the **One defintion rule**.
