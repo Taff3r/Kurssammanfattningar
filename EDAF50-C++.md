@@ -25,10 +25,26 @@ delete[] string; // NOTE the [] operator for arrays.
 ```
 Using `new` should be avoided when possible. But are sometimes neccessary. 
 When possible instead use the `unique_pointer` and `shared_pointer` functions in the `memory` header.
+These "smart" pointers automatically deletes the object to which it points to. 
 ## unique_pointer
+A `unique_pointer` has single ownership of the pointer. Use them when the resource is not shared by muliple objects.
+Ex. : 
+```c++
+# include <memory>
+auto unq = std::unique_pointer<Foo>(new Foo);
+// or 
+std::unique_pointer<Foo> unq = std::unique_pointer<Foo>(new Foo);
+```
+
+The raw pointer can be accessed by using the `get()`-function. The object to which the pointer points will get deleted when the smart pointer deletes it. So copying the raw pointer is not adviced. E.g. do not `auto p = unq.get();` because `p` will be removed when unq is deleted.
+
+## shared_pointers
+A shared pointer is a smart pointer that is automatically deleted when not used. A `shared_pointer` can be "owned" by multiple resoruces at once.
+
+### Destructors
+Objects that own a resource should always implement a `destructor`. So when a smart pointer deletes itself it calls the destructor of that object. If the objects owns other pointers it is **important** that in the destructor deletes those resources. **Other wise we have a memory leak!**
 
 # Include-guards
-
 Header files can at most be included once in accordance to the **One defintion rule**.
 To follow this easily make sure to use include guards in all header files.
 
