@@ -44,7 +44,7 @@ The raw pointer can be accessed by using the `get()`-function. The object to whi
 ## shared_pointers
 A shared pointer is a smart pointer that is automatically deleted when not used. A `shared_pointer` can be "owned" by multiple resoruces at once.
 
-### Destructors
+## Destructors
 Objects that own a resource should always implement a `destructor`. So when a smart pointer deletes itself it calls the destructor of that object. If the objects owns other pointers it is **important** that in the destructor deletes those resources. **Other wise we have a memory leak!**
 
 Ideally a recursive call can be used when deleting resources.
@@ -108,5 +108,32 @@ Ex.:
 #include "eyes.h"
 print(Eyes::brown);
 ```
+# Classes
+Classes are usually split up in two seperate files. The header file (.h) specifying the class, and the source code file (.cc/.cpp). 
+Ex. :
+
+```c++
+// IN foo.h
+#ifndef FOO_H
+#define FOO_H
+class Foo:{
+private:
+    int coolVar;
+public:
+    Foo(int v) : coolVar(var){};
+    void printVar();
+}
+#endif
+
+// IN foo.cc
+#include "foo.h"
+#include <iostream>
+
+void Foo:printVar() {
+    std::cout << this->coolVar << std::endl;
+}
+```
+
+
 
 
