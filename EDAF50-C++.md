@@ -278,6 +278,43 @@ Ex.:
 #include "eyes.h"
 print(Eyes::brown);
 ```
+**Regular** C-like enums are not namespaces in of themselves. See example below:
+
+Ex. :
+```c++
+#include <iostream>
+using namespace std;
+class Foo {
+public:
+    enum Lift {
+        SQUAT,
+        BENCH, 
+        DEADLIFT 
+    };
+
+    static void printLift(Lift l){
+        switch(l){
+            case SQUAT:
+                cout << "SQUAT" << endl;
+                break;
+            case BENCH:
+                cout << "BENCH" << endl;
+                break;
+            case DEADLIFT:
+                cout << "DEADLIFT" << endl;
+                break;
+        }
+    }
+};
+
+int main(){
+    Foo::Lift l = Foo::DEADLIFT; // NOTE! Not Foo::Lifts::DEADLIFT;
+    Foo::printLift(l); // DEADLIFT
+    Foo::printLift(0); // ERROR
+    Foo::printLift(static_cast<Foo::Lift>(0)); // SQUAT
+    l = 1; // ERROR
+}
+```
 # Classes
 Classes are usually split up in two seperate files. The header file (.h) specifying the class, and the source code file (.cc/.cpp). 
 Ex. :
@@ -310,8 +347,11 @@ The keyword `const` can be applied in multiple ways in C++. In the usual way, si
 
 Functions in classes can also be declared `const` they make it impossible to change the internal state of the object. But can be used to make sure that get()-like functions aren't used in a bad manner.
 
+## static
+Static behaves similary like they do in Java. When used in classes they refer to the same variable across object instances. **Static variables cannot be assigned unless they are also `const`**
+Static functions also behave like in Java. They can be used for simple functions that don't require a state to function.
 
-
+# Templates
 
 
 
