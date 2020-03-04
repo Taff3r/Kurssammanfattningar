@@ -116,6 +116,103 @@ The raw pointer can be accessed by using the `get()`-function. The object to whi
 
 ## shared_pointers
 A shared pointer is a smart pointer that is automatically deleted when not used. A `shared_pointer` can be "owned" by multiple resoruces at once.
+The resource is deleted only once **all of the owners** have gone out of scope. This is *usually* done by a counter that decreases once every time a owner calls the destructor.
+Below is a example of an implementation of `SharedPointer` class that does not leak memory. (Atleast in the example below, I am not a one of the gods that writes code for the std.)
+```c++
+// shared.h
+#ifndef SHARED_TEST_H
+#define SHARED_TEST_H
+#include <iostream>
+template <typename T>
+class SharedPointer {
+private:
+    T* resource = nullptr;
+    unsigned int* counter = new unsigned int;
+public:
+    
+    SharedPointer(T* resource): resource(resource){
+        *counter = 1;
+    }
+
+    SharedPointer(SharedPointer& o): resource(o.resource), counter(o.counter){
+        *counter += 1;
+    }
+
+    ~SharedPointer(){
+        *counter -= 1;
+        if (*counter == 0) {
+            delete resource;
+            delete counter;
+        }
+    }
+
+    T* operator ->(){
+        return resource;
+    }
+
+    T& operator *(){
+       return *resource; 
+    }
+
+    void printCounter() const {
+        std::cout << *counter << std::endl; 
+        std::cout << counter << std::endl; 
+    }
+
+    SharedPointer& operator = (SharedPointer& rhs){
+        if(this->resource != rhs.resource){ // Compare if resources have the same address
+            *counter -= 1; // Set counter for the current pointer -1
+            if(*counter == 0){
+                delete resource;
+                delete counter;
+            }
+            this->resource = rhs.resource;
+            this->counter = rhs.counter;
+            *(counter) += 1;
+        }
+        return *this;
+    }
+};
+#endif
+```
+
+```c++
+#include "shared.h"
+int main() {
+    {
+        SharedPointer<int> shared (new int);
+        *shared = 3; 
+        std::cout << *shared << std::endl; // 3
+        std::cout << "outer" << std::endl;
+        shared.printCounter(); 
+        {
+            std::cout << "inner" << std::endl;
+            auto second = shared; // Copy constructor
+            *second = 4;
+            second.printCounter(); // 2 + some random address
+            std::cout << *shared << std::endl; // 4 
+            std::cout << *second << std::endl; // 4  
+            // second is deleted 
+        }
+        std::cout << "outer again" << std::endl;
+        shared.printCounter(); // 1 + same random address
+        // shared is deleted
+    }
+    // Random struct used for example
+    struct Foo {
+        int x = 3;
+    };
+
+    SharedPointer<Foo> f(new Foo);
+    SharedPointer<Foo> b(new Foo);
+    f->x = 4;
+    b = f; // copy assignment
+    std::cout << (*f).x << std::endl; // 4 this weird use is just to prove that the * operator is implemented correctly.
+    std::cout << (*b).x << std::endl; // 4
+    // f and b is deleted automatically
+}
+```
+
 
 ## Destructors
 Objects that own a resource should always implement a `destructor`. So when a smart pointer deletes itself it calls the destructor of that object. If the objects owns other pointers it is **important** that in the destructor deletes those resources. **Other wise we have a memory leak!**
