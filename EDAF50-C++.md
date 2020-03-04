@@ -42,6 +42,35 @@ int main(){
 ```
 
 When passing objects as parameters you should pass its **reference** for expected behaviour.
+For pointers: accessing objects attributes and methods are done by using the `->` operator.
+For references: it is done by using the `.` operator.
+
+Ex. : 
+
+```c++
+
+#include <iostream>
+#include <memory>
+struct Foo {
+    const int myNumber = 3;
+    void printMyNumber(){
+        std::cout << this->myNumber << std::endl;
+    }
+};
+
+int main(){
+    Foo* ptr = new Foo;
+    Foo foo; // Objects declared this way are references under the hood.
+    auto uPtr = std::make_unique<Foo>();
+    ptr->printMyNumber();
+    uPtr->printMyNumber();
+    foo.printMyNumber();
+    delete ptr;
+    // uPtr is automatically deleted.
+}
+```
+
+
 # Allocating memory
 "You're not alive if you're not allocating memory"
 
