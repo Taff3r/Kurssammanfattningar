@@ -118,8 +118,8 @@ The raw pointer can be accessed by using the `get()`-function. The object to whi
 A shared pointer is a smart pointer that is automatically deleted when not used. A `shared_pointer` can be "owned" by multiple resoruces at once.
     The resource is deleted only once **all of the owners** have gone out of scope. This is *usually* done by a counter that decreases once every time a owner calls the destructor.
 Below is a example of an implementation of `SharedPointer` class that does not leak memory. (Atleast in the example below, I am not a one of the gods that writes code for the std.)
-    ```c++
-    // shared.h
+```c++
+// shared.h
 #ifndef SHARED_TEST_H
 #define SHARED_TEST_H
 #include <iostream>
