@@ -467,7 +467,7 @@ int main() {
 ```
 
 Unlike in Java `operators` and `keywords` can be overloaded as well. Sometimes operator overloading is necessary for some `std` functions such as `std::sort` to work as expected (without supplying an addtional lambda). Like a `compareTo` in Java. Also the `<<` operator has to be overloaded for it to be able to stream to `std::cout`.
-
+Some operators and keywords can not be overloaded these are: `sizeof . .* :: ?:`.
 Ex. 
 ```c++
 #include <algorithm>
@@ -513,7 +513,125 @@ int main(){
 
 }
 ```
+For the Date example the overloading of the relevant operators would look like this (Note that this is a bad implementation):
 
+```c++
+    // overload < 
+    bool operator < (const Date& d){
+        int t = year*365 + month*12 + day;
+        int o = d.year*365 + d.month*12 + d.day;
+        return t < o;
+    }
+
+    bool operator > (const Date& d){
+        int t = year*365 + month*12 + day;
+        int o = d.year*365 + d.month*12 + d.day;
+        return t > o;
+    }
+
+    bool operator == (const Date& d){
+        int t = year*365 + month*12 + day;
+        int o = d.year*365 + d.month*12 + d.day;
+        return t == o;
+    }
+
+    bool operator != (const Date& d){
+        return !(*this == d);
+    }
+
+    // Also known as copy assignment
+    Date& operator = (const Date& rhs) {
+        if (*this != rhs){ // First need to overload != operator
+            year = rhs.year;
+            month = rhs.month;
+            day = rhs.day;
+        }
+        return *this;
+    }
+
+    // Overload << 
+    friend std::ostream& operator << (std::ostream& o, const Date& d){
+        o << d.year << d.month << d.day << std::endl;
+        return o;
+    }
+
+    friend std::istream& operator >> (std::istream& i, Date& d){
+        i >> d.day >> d.month >> d.year;
+        return i;
+    }
+
+    // This is used when for example d3 = d1 + d2;
+    Date operator + (const Date& rhs) const{
+        int y = this->year + rhs.year; 
+        int m = this->month + rhs.month; 
+        int d = this->day + rhs.day; 
+        return Date({y, m, d});
+    }
+    // Naive
+    Date operator - (const Date& rhs) const{
+        int y = this->year - rhs.year; 
+        int m = this->month - rhs.month; 
+        int d = this->day - rhs.day; 
+        return Date({y, m, d});
+    }
+
+    // Used for d1 += d2;
+    Date& operator +=(const Date& rhs){
+        this->year += rhs.year; 
+        this->month += rhs.month; 
+        this->day += rhs.day; 
+        return *this; 
+    }
+
+    Date& operator -=(const Date& rhs){
+        this->year -= rhs.year; 
+        this->month -= rhs.month; 
+        this->day -= rhs.day; 
+        return *this; 
+    }
+
+    // Naive
+    Date& operator ++ (){
+        this->day++;
+        return *this;
+    }
+
+    // Naive returning a reference to this allows chaining such as d3 = d1 + d2++;
+    Date& operator -- (){
+        this->day--;
+        return *this;
+    }
+
+```
+
+### Functors
+Functors are special objects that overload the `()` operator. Functors can be thought of "a function with a state".
+They are usually used with `std` functions such as `std::transform`
+
+```c++
+#include <algorithm>
+#include <iostream>
+#include <vector>
+struct Adder {
+    int x;
+    Adder(int c): x(c){};
+    int operator ()(int& d) {
+        return d+x;
+    }
+};
+
+int main() {
+    std::vector<int> v = {1,2,3,4,5};
+    std::transform(v.begin(), v.end(), v.begin(), Adder(1));
+    for (int& i : v){
+        std::cout << i << " ";
+    }
+    // 2 3 4 5 6
+}
+
+```
+# Iterators
+Iterators are special classes that keep a reference to a reference to a specific value. An iterator has overload specific operators. Such as `*` and `++`(Depending on the type of iterator).
 
 
 
