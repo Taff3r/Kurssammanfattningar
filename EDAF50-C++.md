@@ -466,7 +466,55 @@ int main() {
 }
 ```
 
-Unlike in Java `operators` and `keywords` can be overloaded as well.
+Unlike in Java `operators` and `keywords` can be overloaded as well. Sometimes operator overloading is necessary for some `std` functions such as `std::sort` to work as expected (without supplying an addtional lambda). Like a `compareTo` in Java. Also the `<<` operator has to be overloaded for it to be able to stream to `std::cout`.
+
+Ex. 
+```c++
+#include <algorithm>
+#include <vector>
+#include <iostream>
+struct Date {
+    int year, month, day;
+   
+    Date(int y, int m, int d): year(y), month(m), day(d){};
+    // overload < to be able to sort the list.
+    bool operator < (const Date& d){
+        int t = year*365 + month*12 + day;
+        int o = d.year*365 + d.month*12 + d.day;
+        return t < o;
+    }
+
+    // Overload << NOTE the friend keyword!
+    friend std::ostream& operator << (std::ostream& o, const Date& d){
+        o << d.year << d.month << d.day << std::endl;
+        return o;
+    }
+};
+
+int main(){
+    Date d(2020, 2, 3);
+    Date o(2019, 2, 3);
+    Date p(2019, 1, 1);
+
+    std::vector<Date> v;
+    v.push_back(o);
+    v.push_back(d);
+    v.push_back(p);
+
+    std::sort(v.begin(), v.end());
+
+    for(Date& d : v){
+        std::cout << d;
+    }
+
+    //201911
+    //201923
+    //202023
+
+}
+```
+
+
 
 
 
