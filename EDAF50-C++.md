@@ -479,8 +479,8 @@ struct Date {
     Date(int y, int m, int d): year(y), month(m), day(d){};
     // overload < to be able to sort the list.
     bool operator < (const Date& d){
-        int t = year*365 + month*12 + day;
-        int o = d.year*365 + d.month*12 + d.day;
+        int t = year*365 + month*31 + day;
+        int o = d.year*365 + d.month*31 + d.day;
         return t < o;
     }
 
