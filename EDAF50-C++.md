@@ -352,6 +352,122 @@ Static behaves similary like they do in Java. When used in classes they refer to
 Static functions also behave like in Java. They can be used for simple functions that don't require a state to function.
 
 # Templates
+Templates are used to achieve generic functions and classes that can be used with multiple different types. 
+For each type used in the class they have to be declared at the top of the class. 
+
+Ex.
+
+```c++
+#ifndef SIMPLEMAP_H
+#define SIMPLEMAP_H
+#include <vector>
+template <typename K, typename V> // Templates for Key and Value
+class SimpleMap {
+private:
+    std::vector<V> vec;
+    int hash(T& t);
+    void grow();
+    unsigned int inserted;
+    const double MAX_SATIATION = 0.5;
+public:
+   void insert(K&, V&);
+   V& get(K&) const;
+};
+#endif
+```
+Template `functions` have to implemented with a template declaration for each function (Unless they are defined in the header).
+
+Ex. 
+
+```c++
+
+// simplemap.h
+#include "simplemap.h"
+#include <string>
+template <typename K, typename V>
+void SimpleMap<K, V>::insert(K& k, V& v){
+    if (inserted / vec.size() >= MAX_SATIATION) {
+        grow();
+    }
+    inserted[hash(k)] = v; // Naive
+}
+
+
+// simplemap.cc
+template <typename K, typename V>
+int SimpleMap<K, V>::hash(K& k){
+    int someResult = generic_hash(k);
+    return someResult;
+}
+
+// Template specialization
+template<>
+int SimpleMap<std::string, int>::hash(std::string& k){
+    return std::hash<std::string>{}(k);
+}
+
+// Partial specialization won't work
+template<typename V>
+int SimpleMap<std::string, V>::hash(std::string& k){
+    return std::hash<std::string>{}(k);
+}
+```
+
+For the partial specialization to work we have to redeclare the class for using `std::string` as the key.
+
+```c++
+// still simplemap.h
+template <typename V>
+class SimpleMap<std::string, V> {
+private:
+    std::vector<V> vec;
+    int hash(std::string& k);
+    void grow();
+    unsigned int inserted;
+    const double MAX_SATIATION = 0.5;
+public:
+   void insert(std::string&, V&);
+   V& get(std::string&) const;
+};
+// now the specialization above will work.
+```
+
+# Overloading
+
+**Functions** can be overloaded similarly to that in Java.
+Ex.
+```c++
+#include <iostream>
+
+void printNbr(double n){
+    std::cout << "double " << n << std::endl;
+}
+
+void printNbr(int n){
+    std::cout << "int " << n << std::endl;
+}
+
+void printNbr(float n){
+    std::cout << "float " << n << std::endl;
+}
+template <typename D>
+void printNbr(D n){
+    std::cout << "generic " << n << std::endl;
+}
+int main() {
+    float f = 10.2;
+    double d = 10.2;
+    int i = 10;
+    printNbr(i); // int
+    printNbr(d); // double 
+    printNbr(f); // float
+    printNbr('A'); // generic
+    printNbr("Hello there"); // generic
+}
+```
+
+Unlike in Java `operators` and `keywords` can be overloaded as well.
+
 
 
 
