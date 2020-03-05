@@ -515,7 +515,7 @@ int main(){
 ```
 For the Date example the overloading of the relevant operators would look like this (Note that this is a bad implementation):
 
-    ```c++
+```c++
     // overload < 
     bool operator < (const Date& d){
         int t = year*365 + month*12 + day;
