@@ -116,63 +116,63 @@ The raw pointer can be accessed by using the `get()`-function. The object to whi
 
 ## shared_pointers
 A shared pointer is a smart pointer that is automatically deleted when not used. A `shared_pointer` can be "owned" by multiple resoruces at once.
-The resource is deleted only once **all of the owners** have gone out of scope. This is *usually* done by a counter that decreases once every time a owner calls the destructor.
+    The resource is deleted only once **all of the owners** have gone out of scope. This is *usually* done by a counter that decreases once every time a owner calls the destructor.
 Below is a example of an implementation of `SharedPointer` class that does not leak memory. (Atleast in the example below, I am not a one of the gods that writes code for the std.)
-```c++
-// shared.h
+    ```c++
+    // shared.h
 #ifndef SHARED_TEST_H
 #define SHARED_TEST_H
 #include <iostream>
-template <typename T>
-class SharedPointer {
-private:
-    T* resource = nullptr;
-    unsigned int* counter = new unsigned int;
-public:
-    
-    SharedPointer(T* resource): resource(resource){
-        *counter = 1;
-    }
+    template <typename T>
+    class SharedPointer {
+        private:
+            T* resource = nullptr;
+            unsigned int* counter = new unsigned int;
+        public:
 
-    SharedPointer(SharedPointer& o): resource(o.resource), counter(o.counter){
-        *counter += 1;
-    }
-
-    ~SharedPointer(){
-        *counter -= 1;
-        if (*counter == 0) {
-            delete resource;
-            delete counter;
-        }
-    }
-
-    T* operator ->(){
-        return resource;
-    }
-
-    T& operator *(){
-       return *resource; 
-    }
-
-    void printCounter() const {
-        std::cout << *counter << std::endl; 
-        std::cout << counter << std::endl; 
-    }
-
-    SharedPointer& operator = (SharedPointer& rhs){
-        if(this->resource != rhs.resource){ // Compare if resources have the same address
-            *counter -= 1; // Set counter for the current pointer -1
-            if(*counter == 0){
-                delete resource;
-                delete counter;
+            SharedPointer(T* resource): resource(resource){
+                *counter = 1;
             }
-            this->resource = rhs.resource;
-            this->counter = rhs.counter;
-            *(counter) += 1;
-        }
-        return *this;
-    }
-};
+
+            SharedPointer(SharedPointer& o): resource(o.resource), counter(o.counter){
+                *counter += 1;
+            }
+
+            ~SharedPointer(){
+                *counter -= 1;
+                if (*counter == 0) {
+                    delete resource;
+                    delete counter;
+                }
+            }
+
+            T* operator ->(){
+                return resource;
+            }
+
+            T& operator *(){
+                return *resource; 
+            }
+
+            void printCounter() const {
+                std::cout << *counter << std::endl; 
+                std::cout << counter << std::endl; 
+            }
+
+            SharedPointer& operator = (SharedPointer& rhs){
+                if(this->resource != rhs.resource){ // Compare if resources have the same address
+                    *counter -= 1; // Set counter for the current pointer -1
+                    if(*counter == 0){
+                        delete resource;
+                        delete counter;
+                    }
+                    this->resource = rhs.resource;
+                    this->counter = rhs.counter;
+                    *(counter) += 1;
+                }
+                return *this;
+            }
+    };
 #endif
 ```
 
@@ -221,25 +221,25 @@ Ideally a recursive call can be used when deleting resources.
 Ex. :
 ```c++
 class LinkedList {
-private:
-    template <typename T>
-    struct Node {
-        T val;
-        Node* next;
-        // Constructor
-        Node(T val, Node* next) : next(next), val(val){};
-        // Destructor. NOTE THE DELETION.
-        ~Node() {
-            delete next;
+    private:
+        template <typename T>
+            struct Node {
+                T val;
+                Node* next;
+                // Constructor
+                Node(T val, Node* next) : next(next), val(val){};
+                // Destructor. NOTE THE DELETION.
+                ~Node() {
+                    delete next;
+                }
+            };
+        Node* head;
+    public:
+        // Other functions
+        // DESTRUCTOR. NOTE CALLING THE DELETE ON HEAD WILL DELETE HEADS->next which will delete next->next and so on until null is reached;
+        ~Node(){
+            delete head;
         }
-    };
-    Node* head;
-public:
-    // Other functions
-    // DESTRUCTOR. NOTE CALLING THE DELETE ON HEAD WILL DELETE HEADS->next which will delete next->next and so on until null is reached;
-    ~Node(){
-        delete head;
-    }
 };
 ```
 
@@ -252,10 +252,10 @@ To follow this easily make sure to use include guards in all header files.
 #ifndef BAR_H
 #define BAR_H
 class Eyes {
-private:
-    // some private stuff
-public:
-    // some public stuff
+    private:
+        // some private stuff
+    public:
+        // some public stuff
 };
 #endif
 ```
@@ -285,26 +285,26 @@ Ex. :
 #include <iostream>
 using namespace std;
 class Foo {
-public:
-    enum Lift {
-        SQUAT,
-        BENCH, 
-        DEADLIFT 
-    };
+    public:
+        enum Lift {
+            SQUAT,
+            BENCH, 
+            DEADLIFT 
+        };
 
-    static void printLift(Lift l){
-        switch(l){
-            case SQUAT:
-                cout << "SQUAT" << endl;
-                break;
-            case BENCH:
-                cout << "BENCH" << endl;
-                break;
-            case DEADLIFT:
-                cout << "DEADLIFT" << endl;
-                break;
+        static void printLift(Lift l){
+            switch(l){
+                case SQUAT:
+                    cout << "SQUAT" << endl;
+                    break;
+                case BENCH:
+                    cout << "BENCH" << endl;
+                    break;
+                case DEADLIFT:
+                    cout << "DEADLIFT" << endl;
+                    break;
+            }
         }
-    }
 };
 
 int main(){
@@ -324,11 +324,11 @@ Ex. :
 #ifndef FOO_H
 #define FOO_H
 class Foo:{
-private:
-    int coolVar;
-public:
-    Foo(int v) : coolVar(var){};
-    void printVar();
+    private:
+        int coolVar;
+    public:
+        Foo(int v) : coolVar(var){};
+        void printVar();
 }
 #endif
 
@@ -363,15 +363,15 @@ Ex.
 #include <vector>
 template <typename K, typename V> // Templates for Key and Value
 class SimpleMap {
-private:
-    std::vector<V> vec;
-    int hash(T& t);
-    void grow();
-    unsigned int inserted;
-    const double MAX_SATIATION = 0.5;
-public:
-   void insert(K&, V&);
-   V& get(K&) const;
+    private:
+        std::vector<V> vec;
+        int hash(T& t);
+        void grow();
+        unsigned int inserted;
+        const double MAX_SATIATION = 0.5;
+    public:
+        void insert(K&, V&);
+        V& get(K&) const;
 };
 #endif
 ```
@@ -419,15 +419,15 @@ For the partial specialization to work we have to redeclare the class for using 
 // still simplemap.h
 template <typename V>
 class SimpleMap<std::string, V> {
-private:
-    std::vector<V> vec;
-    int hash(std::string& k);
-    void grow();
-    unsigned int inserted;
-    const double MAX_SATIATION = 0.5;
-public:
-   void insert(std::string&, V&);
-   V& get(std::string&) const;
+    private:
+        std::vector<V> vec;
+        int hash(std::string& k);
+        void grow();
+        unsigned int inserted;
+        const double MAX_SATIATION = 0.5;
+    public:
+        void insert(std::string&, V&);
+        V& get(std::string&) const;
 };
 // now the specialization above will work.
 ```
@@ -475,7 +475,7 @@ Ex.
 #include <iostream>
 struct Date {
     int year, month, day;
-   
+
     Date(int y, int m, int d): year(y), month(m), day(d){};
     // overload < to be able to sort the list.
     bool operator < (const Date& d){
@@ -515,7 +515,7 @@ int main(){
 ```
 For the Date example the overloading of the relevant operators would look like this (Note that this is a bad implementation):
 
-```c++
+    ```c++
     // overload < 
     bool operator < (const Date& d){
         int t = year*365 + month*12 + day;
@@ -523,84 +523,84 @@ For the Date example the overloading of the relevant operators would look like t
         return t < o;
     }
 
-    bool operator > (const Date& d){
-        int t = year*365 + month*12 + day;
-        int o = d.year*365 + d.month*12 + d.day;
-        return t > o;
-    }
+bool operator > (const Date& d){
+    int t = year*365 + month*12 + day;
+    int o = d.year*365 + d.month*12 + d.day;
+    return t > o;
+}
 
-    bool operator == (const Date& d){
-        int t = year*365 + month*12 + day;
-        int o = d.year*365 + d.month*12 + d.day;
-        return t == o;
-    }
+bool operator == (const Date& d){
+    int t = year*365 + month*12 + day;
+    int o = d.year*365 + d.month*12 + d.day;
+    return t == o;
+}
 
-    bool operator != (const Date& d){
-        return !(*this == d);
-    }
+bool operator != (const Date& d){
+    return !(*this == d);
+}
 
-    // Also known as copy assignment
-    Date& operator = (const Date& rhs) {
-        if (*this != rhs){ // First need to overload != operator
-            year = rhs.year;
-            month = rhs.month;
-            day = rhs.day;
-        }
-        return *this;
+// Also known as copy assignment
+Date& operator = (const Date& rhs) {
+    if (*this != rhs){ // First need to overload != operator
+        year = rhs.year;
+        month = rhs.month;
+        day = rhs.day;
     }
+    return *this;
+}
 
-    // Overload << 
-    friend std::ostream& operator << (std::ostream& o, const Date& d){
-        o << d.year << d.month << d.day << std::endl;
-        return o;
-    }
+// Overload << 
+friend std::ostream& operator << (std::ostream& o, const Date& d){
+    o << d.year << d.month << d.day << std::endl;
+    return o;
+}
 
-    friend std::istream& operator >> (std::istream& i, Date& d){
-        i >> d.day >> d.month >> d.year;
-        return i;
-    }
+friend std::istream& operator >> (std::istream& i, Date& d){
+    i >> d.day >> d.month >> d.year;
+    return i;
+}
 
-    // This is used when for example d3 = d1 + d2;
-    Date operator + (const Date& rhs) const{
-        int y = this->year + rhs.year; 
-        int m = this->month + rhs.month; 
-        int d = this->day + rhs.day; 
-        return Date({y, m, d});
-    }
-    // Naive
-    Date operator - (const Date& rhs) const{
-        int y = this->year - rhs.year; 
-        int m = this->month - rhs.month; 
-        int d = this->day - rhs.day; 
-        return Date({y, m, d});
-    }
+// This is used when for example d3 = d1 + d2;
+Date operator + (const Date& rhs) const{
+    int y = this->year + rhs.year; 
+    int m = this->month + rhs.month; 
+    int d = this->day + rhs.day; 
+    return Date({y, m, d});
+}
+// Naive
+Date operator - (const Date& rhs) const{
+    int y = this->year - rhs.year; 
+    int m = this->month - rhs.month; 
+    int d = this->day - rhs.day; 
+    return Date({y, m, d});
+}
 
-    // Used for d1 += d2;
-    Date& operator +=(const Date& rhs){
-        this->year += rhs.year; 
-        this->month += rhs.month; 
-        this->day += rhs.day; 
-        return *this; 
-    }
+// Used for d1 += d2;
+Date& operator +=(const Date& rhs){
+    this->year += rhs.year; 
+    this->month += rhs.month; 
+    this->day += rhs.day; 
+    return *this; 
+}
 
-    Date& operator -=(const Date& rhs){
-        this->year -= rhs.year; 
-        this->month -= rhs.month; 
-        this->day -= rhs.day; 
-        return *this; 
-    }
+Date& operator -=(const Date& rhs){
+    this->year -= rhs.year; 
+    this->month -= rhs.month; 
+    this->day -= rhs.day; 
+    return *this; 
+}
 
-    // Naive
-    Date& operator ++ (){
-        this->day++;
-        return *this;
-    }
+// Naive
+Date& operator ++ (){
+    this->day++;
+    return *this;
+}
 
-    // Naive returning a reference to this allows chaining such as d3 = d1 + d2++;
-    Date& operator -- (){
-        this->day--;
-        return *this;
-    }
+// Naive returning a reference to this allows chaining such as d3 = d1 + d2++;
+Date& operator -- (){
+    this->day--;
+    return *this;
+}
 
 ```
 
@@ -631,11 +631,28 @@ int main() {
 
 ```
 # Iterators
-Iterators are special classes that keep a reference to a reference to a specific value. An iterator has overload specific operators. Such as `*` and `++`(Depending on the type of iterator).
+Iterators are special classes that keep a reference to a reference to a specific value. An iterator has overload specific operators: `!=`, `==`, `=` and `++`(Depending on the type of iterator), it also has to be copy constructible.
+Iterators a simply keeping track of a value at specific position. A simple example is shown below.
+Iterators are objects are usually created by calling the parent classes functions `begin()` and `end()` where `begin()` points to the first element, and `end()` points to last + 1. 
+Iterators are present in almost all `std` containers.
+Containers that don't have a `begin()` and `end()` functions cant use for-each loops.
+Example:
+```c++
+std::vector<int> v = {1,2,3,4,5};
+auto b = v.begin(); // copy iterator
+int i = 5;
+while (b != v.end()){
+    *b = i++; // Set the value of that the iterator points to to i and increase i by one.
+    b++; // Increment the position of the iterator.
+}
+for(int& d : v) { // Can use for-each since std::vector has iterators.
+    std::cout << d << " ";
+}
+// 5 6 7 8 9
+```
+`TODO: Implement a iterator yourself`
 
 
-
-
-
+# Containers
 
 
