@@ -844,6 +844,181 @@ D::D(// params ) : B( //params ), //... {//...}
 Note:
 + Constructors are not inherited
 + **DO NOT CALL VIRTUAL FUNCTIONS IN A CONSTUCTOR**: In the base class B `this` is of a type `B*`.
+
+**WRONG WAY**:
+```c++
+class Base {
+public:
+    Base(int i): x(i) {}
+    virtual void print() {cout << "Base: " << x << endl;}
+private:
+    int x;
+};
+
+class Derived : public Base {
+
+};
+
+int main() {
+    Derived b1; // Use of deleted function
+                // Derived::Derived()
+    Derived d2(5); // No matching fucntion for call to 
+                   // Derived::Derived(int)
+}
+```
+
+**RIGHT WAY**:
+```c++
+class Base {
+public:
+    Base(int i=0): x(i) {} // NOTE default value of i!
+    virtual void print() {cout << "Base: " << x << endl;}
+private:
+    int x;
+};
+
+class Derived : public Base {
+    Derived(int i) : Base(i) {} // Calls constrctor of Base.
+};
+
+int main() {
+    Derived b1; // OK!
+    d.print();
+    Derived d2(5); // OK!
+    d2.print();
+}
+```
+### Rules for inherited constructors
++ `using` makes all base class constructors inherited, except:
+    - Those hidden by the derived class (with the same parameters)
+    - default, copy, and move constructors
+        + If not defined, synthesized as usual
++ Default arguments in the super class gives multiple inherited constructors.
++ The copy constructor shall copy the **entire** object.
+    - Typically done by calling the base class constructor.
++ The same applies to the `operator=`.
++ Different from the destructor
+    - A destructor shall only deallocate what has been allocated in the class itself. The base class destructor is implictly called.
++ the synthesized default constructor or the copy contril members are deleted in a derived class if the correspoing function is deleted in the base class. (i.e. `private` or `=delete`)
+    - Default constructor
+    - copy constructor
+    - copy assignment operator
+    - (destructor, but avoid classes without a destructor)
++ Base classes should (typically) define these `=default`
+
+### Accessibility and inheritance
+```c++
+class D1: public B { // public inheritance
+ // ..
+};
+
+class D1: protected B { // protected inheritance
+ // ..
+};
+
+class D1: private B { // private inheritance
+ // ..
+};
+```
+| Inheritance type | Access. in B | Access. in D |
+| ................ | ............ | ............ |
+| `public`         | + `public` + `protected` + `private` | + `public` + `protected` + `private`|
+| `protected`      | + `public` + `protected` + `private` | + `protected` + `protected` + `private` |
+| `private`        | + `public` + `protected` + `private` | + `private` + `private` + `private` |
+
+The accessibility inside D is **not** affected by the type of inheritance.
+
+### Function overloading and inheritance
+Functon overloading does not work as usual between levels in a class hierarchy.A
+```c++
+class C1 {
+public:
+void f(int) {cout << "C1::f(int)\n";}
+};
+
+class C2: public C1 {
+public:
+    void f() {cout << "C2::f(void)\n";}
+};
+
+int main() {
+C1 a;
+C2 b;
+
+a.f(5); // OK. Calls C1::f(int)
+b.f(); // OK. Calls C2::f(void)
+b.f(2); // Error. Calls C1::f(int) is hidden
+b.C1::f(10); // OK
+}
+```
+
+The fix;
+```c++
+class C1 {
+public:
+void f(int) {cout << "C1::F(int)\n";}
+};
+
+class C2: public C1 {
+public:
+    void f() {cout << "C2::f(void)\n";}
+};
+
+int main() {
+C1 a;
+C2 b;
+
+a.f(5); // OK. Calls C1::f(int)
+b.f(); // OK. Calls C2::f(void)
+b.f(10); // OK. Calls C1::f(int)
+}
+```
+
+### Memory allocation of abstract types
+** YOU CANNOT ALLOCATE AN OBJECT OF AN ABSTRACT TYPE**
+```c++
+Dog d;
+Cat c;
+Bird b;
+Vector<Animal> zoo {d,c,b}; // ERROR cannot allocate an object of abstract type `Animal`
+```
+The fix: *USE POINTERS*
+```c++
+Dog d;
+Cat c;
+Bird b;
+Vector<Animal> zoo {&d,&c,&b}; // OK!
+
+for (auto animal: zoo) {
+    x->speak(); 
+}
+```
+
+## Mulitple inheritance
+In C++ a class can inherit from mulitple base classes.
+The diamond problem:
+How many `MotorVehicle` are there in a minibus?
+
+```c++
+class MotorVehical{ //... };
+class Bus : public MotorVehicle { //... };
+class Car: public MotorVehicle { //... };
+class MiniBus : public Bus, public Car { //... };
+```
++ A common base class is included multiple times
+    - Multiple copies of member varibles
+    - Members must be caccessed as Base::name to avoid ambiguity.
++ If `virtual` inheritance is not used!
+
+### Virtual inheritance
+Virtual inheritance: Derived classes share the base class instance. (The base class is only included once)
+```c++
+class MotorVehical{ //... };
+class Bus : public virtual MotorVehicle { //... }; // NOTE VIRTUAL
+class Car: public virtual MotorVehicle { //... };  // NOTE VIRTUAL
+class MiniBus : public Bus, public Car { //... };
+```
+The *most derived class* (MiniBus) must call the *constructor of the grandparent* (MotorVehicle).
 # Containers
 
 
