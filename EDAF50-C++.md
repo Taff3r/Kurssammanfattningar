@@ -987,7 +987,7 @@ The fix: *USE POINTERS*
 Dog d;
 Cat c;
 Bird b;
-Vector<Animal> zoo {&d,&c,&b}; // OK!
+Vector<Animal*> zoo {&d,&c,&b}; // OK!
 
 for (auto animal: zoo) {
     x->speak(); 
