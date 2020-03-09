@@ -652,7 +652,198 @@ for(int& d : v) { // Can use for-each since std::vector has iterators.
 ```
 `TODO: Implement a iterator yourself`
 
+# Polymorphism and Inhertiance
+### Static binding
+The meaning of a construct is decided at *compile-time*.
+Applies to:
+    1. Overloading
+    2. Generic programming (Templates)
+### Dynamic binding
+The meaning of a construct is decided at *run-time*.
+Applies to:
+    1. `virtual` functions.
 
+Dynamic binding gets some performance overhead but barely noticable. 
+
+### Concrete types
+Behaves just like "built-in" types.
+    1. Can be copied.
+    2. Can be directly referred to.
+    3. Can be placed on the stack and in other objects.
+    4. The *representation* is part of the *definition*. (Can be private, but is known.)
+
+A concrete type: Vector.
+```c++
+class Vector {
+public:
+    Vector(int l = 0): elem(new int[l], sz(l)) {}
+    ~Vector() {delete[] elem;}
+    int size() const {return sz;}
+    int& operator[](int i) {return elem[i];}
+private:
+    int* elem;
+    int sz;
+};
+```
+### Abstract type
+An **abstract type** decouples the interface from the representation.
+    1. Isolates the user from the implematation details.
+    2. The representation of objects (including the size!) is now known!
+    3. Can only be accessed through pointers or references.
+    4. Cannot be instantiated. (Only concrete subclasses)
+    5. Code using the abstract type *does not need to be recompiled* if the conrecte subclasses are changed.
+
+An abstact type abstact class (interface in Java):
+```c++
+class Container {
+public:
+    virtual int size() const = 0; // Pure virtual function
+    virtual int& operator[](int o) = 0;
+    virtual ~Container() = default; // A polymorphic type needs a virtual destructor
+    // copy && move
+};
+```
+In C++ member functions are **NOT** `virtual` unless declared so!
+    1. It is possible to inherit from a class and *hide* functions.
+    2. Base class functions can be explicitly called.
+    3. Can be used to "extend" a function. (Add things before and after the function).
+```c++
+struct Clock {
+private:
+    int seconds;
+public:
+    Clock& tick(); // NOTE! Not virtual
+    int getTicks() {return seconds;}
+};
+
+stuct AlarmClock : public Clock {
+    using Clock::Clock;
+    AlarmClock& tick(); // Hides Clock::tick() (Due to using?)
+private:
+    int alarmTime;
+}
+
+AlarmClock& AlarmClock::tick() {
+    Clock::tick(); // Default behaviour of base class.
+    if (getTicks() == alarmTime){
+        // Sound the alarm!
+    }
+    return *this;
+}
+```
+### Implementing an interface
+```c++
+class Vector : public Container {
+public:
+    Vector(int l = 0): p{new int[l]}, sz{l} {}
+    ~Vector() {delete[] elem;}
+    int size() const override {return sz;} // NOTE Override <=> @Override in Java (C++11)
+    int& operator[](int i) override {return elem[i];}
+private:
+    int *elem;
+    int sz;
+};
+```
+
+**Destuctors** must be `virtual`.
+```c++
+Container* c = new Vector(10);
+
+// ...
+
+delete c; // The destuctor of Container is called
+```
+In the example above `~Container()` is called. If it is not virtual `~Vector()` is never called and we have a **memory leak**. 
+We therefore declare the `Container` destuctor virtual to make sure every class the implements it **has to** implement the destructor to compile without errors.
+
+
+### Using an abstract class.
+```c++
+void fill(Container& c, int v){
+    for(int i = 0; i != c.size(); ++i){
+        v[i] = v;
+    }
+}
+
+void print(Container& c) {
+    for (int i = 0; i != c.size(); ++i) {
+        cout << c[i] << " ";
+    }
+    cout << endl;
+}
+
+int main() {
+    Vector v(10); // Vector implements Container
+    print(v);
+    fill(v, 3);
+    print(v);
+}
+```
+Assume we have two other classes that implements `Container`.
+```c++
+class MyArray : public Container { // ... };
+class List : public Container { // ... };
+
+int main() {
+    Vector v(10); // Vector implements Container
+    print(v);
+    fill(v, 3);
+    print(v);
+
+    MyArray a(5);
+    print(a);
+    fill(a, 3);
+    print(a);
+
+    List l{1,2,3,4,5};
+    print(l);
+}
+```
+In the example above *dynamic binding* of `Container::size()` and `Container::operator[]()`.
+
+### Templates and abstract types
+```c++
+template <typename T>
+class Container {
+public:
+    virtual size_t size() const = 0;
+    virtual T& operator[](size_t o) = 0;
+    virtual ~Container() = default;
+    virtual void print() const = 0;
+};
+
+template <typename T>
+class Vector : public Container<T> {
+public:
+    Vector(size_t l = 0) p{new T[l]}, sz{l} {}
+    ~Vector() {delete[] p;}
+    T& operator[](size_t i) override {return p[i];}
+    virtual void print() const override;
+private:
+    T *p;
+    size_t sz;
+};
+```
+
+### Rules for base class constructor
++ The default constructor of the base class is called (If it exists!)
++ Arguments to the base class constructor
+    - Are given in the memember init. list in the derived class constructor.
+    - The name of the base class must be `used`. (`super()` like in Java does not exists because of the possiblity of mulitple inheritence.)
+
+Order of init. in constuctor (for a derived class)
+1. The base class is initizalized: The base class construcotr is called.
+2. The derived class is initilized: Data members (in the derived class) is initizalized.
+3. The constructor body of the derived class is executed.
+
+Explicit call of base class constructor in the member initizalizer list:
+```c++
+D::D(params... ) : B(param... ), ... {...}
+``` 
+
+Note:
++ Constructors are not inherited
++ **DO NOT CALL VIRTUAL FUNCTIONS IN A CONSTUCTOR**: In the base class B `this` is of a type `B*`.
 # Containers
 
 
