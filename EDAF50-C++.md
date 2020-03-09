@@ -1020,6 +1020,73 @@ class Car: public virtual MotorVehicle { //... };  // NOTE VIRTUAL
 class MiniBus : public Bus, public Car { //... };
 ```
 The *most derived class* (MiniBus) must call the *constructor of the grandparent* (MotorVehicle).
+
 # Containers
+## Sequences (Homogeneous)
++ `vector<T>`
++ `deque<T>`
++ `list<T>`
 
+### Vector and deque
+`deque<T>`: **D**ouble-**e**nded **que**ue.
 
+| Function | `vector` | `deque` | Return type |
+|----------|----------|---------|-------------|
+| `clear()`|   YES    |   YES   | `void`      |
+| `size()` |   YES    |   YES   | `size_t`    |
+| `empty()`|   YES    |   YES   | `void`      | 
+| `push_back()`|   YES    |   YES   | `void`  | 
+| `pop_back()`|   YES    |   YES   |  `void`  |
+| `emplace_back()`|   YES    |   YES   | `void` |
+| `front()`|   YES    |   YES   | `T&` |
+| `back()`|   YES     |   YES   | `T&` |
+| `at()`|   YES       |   YES   | `T&` |
+| `operator[]()`|   YES    |   YES   | `T&` |
+| `assign()`|   YES    |   YES   | `void` | 
+| `insert()`|   YES    |   YES   | `void` |
+| `emplace()`|   YES    |   YES   | `void`|
+| `resize()`|   YES    |   YES   | `void` |
+| `reserve()`|   YES    |   YES   | `void`|
+| `push_front()`|   NO    |   YES   | `void`|
+| `pop_front()`|   NO    |   YES   | `void` |
+| `emplace_front()`|   NO    |   YES   | `void` |
+
+**NOTE** The `void` return types of `pop` functions. If you want to get the elements at the front and remove it you need to first do `front()` followed by a `pop_front`!
+
+The constructors and the function assign have three overloads:
+1. fill: *n* elements with the same value.
+    + `void assign (size_type n, const value_type& val);`
+2. initializer list:
+    + `void assign (initializer_list<value_type> il);`
+3. range: copies the elements in the interval [first, last).
+    + `void assign (InputIterator first, InputIterator last);`
+
+Ex. 
+```c++
+#include <iostream>
+#include <vector>
+using std::cout;
+using std::endl;
+using std::vector;
+int main() {
+    // fill
+    vector<int> l(10, 1);
+    for(auto& i : l) {
+        cout << i << " "; // 1 1 1 1 1 1 1 1 1 1
+    }
+    cout << endl;
+
+    // init. list
+    vector<int> v({1,2,3,4,5});
+    for(auto& i : v) {
+        cout << i << " "; // 1 2 3 4 5 
+    }
+    cout << endl;
+    // iterator
+    vector<int> q(v.begin(), v.end());
+    for(auto& i : q) {
+        cout << i << " "; // 1 2 3 4 5
+    }
+    cout << endl;
+}
+```
