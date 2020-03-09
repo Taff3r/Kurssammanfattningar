@@ -687,11 +687,11 @@ private:
 ```
 ### Abstract type
 An **abstract type** decouples the interface from the representation.
-    1. Isolates the user from the implematation details.
-    2. The representation of objects (including the size!) is now known!
-    3. Can only be accessed through pointers or references.
-    4. Cannot be instantiated. (Only concrete subclasses)
-    5. Code using the abstract type *does not need to be recompiled* if the conrecte subclasses are changed.
+1. Isolates the user from the implematation details.
+2. The representation of objects (including the size!) is now known!
+3. Can only be accessed through pointers or references.
+4. Cannot be instantiated. (Only concrete subclasses)
+5. Code using the abstract type *does not need to be recompiled* if the conrecte subclasses are changed.
 
 An abstact type abstact class (interface in Java):
 ```c++
@@ -704,9 +704,9 @@ public:
 };
 ```
 In C++ member functions are **NOT** `virtual` unless declared so!
-    1. It is possible to inherit from a class and *hide* functions.
-    2. Base class functions can be explicitly called.
-    3. Can be used to "extend" a function. (Add things before and after the function).
+1. It is possible to inherit from a class and *hide* functions.
+2. Base class functions can be explicitly called.
+3. Can be used to "extend" a function. (Add things before and after the function).
 ```c++
 struct Clock {
 private:
@@ -838,7 +838,7 @@ Order of init. in constuctor (for a derived class)
 
 Explicit call of base class constructor in the member initizalizer list:
 ```c++
-D::D(params... ) : B(param... ), ... {...}
+D::D(// params ) : B( //params ), //... {//...}
 ``` 
 
 Note:
