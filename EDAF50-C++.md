@@ -1090,3 +1090,61 @@ int main() {
     cout << endl;
 }
 ```
+
+### List
+`list<T>` is doubly linked list. 
+If you want a simply linked list, use `forward_list<T>` which is only forwards iterable. You can still use `begin()` and `end()` though.
+
+## Containers and resource management
++ Elements are *copied* into the container.
++ When an element is removed, it is *destroyed.**
++ The destructor of a container destorys all elements.
++ Usually a bad idea to store owning raw pointers in a container.
+    - Requires explicit destruction of the elements.
+    - *Use smart pointers*
++ Avoid making unnecessary copies
+    - Use `emplace_back` instead of `push_back` of a temporary variable.
+    - Use `reserve` before doing a known number of `push_back`.
+    - Reuse capacity when possible
+    - Call by `const  & ` as default.
+
+## Sets and maps
+
+|        Name |      Attributes                |
+|-------------|--------------------------------|
+|     map<K,V>| Unique keys                    |
+|multimap<K,V>| Can contain duplicate keys     |
+|     set<K>  | Unique keys                    |
+|multiset<K,V>| Can contain duplicate keys     |
+
+By default orders elements with `operator <`.
+A custom comperator can be provided.
+
+Ex.
+```c++
+template <class Key, class Compare = std::less<Key>>
+class set {
+    explicit set (const Compare& comp = Compare());A
+    //...
+};
+```
+### Operations on sets and maps
+
+| Function        | `std::map`      | `std::set`      | return type                            |
+|-----------------|-----------------|-----------------|----------------------------------------|
+| `insert`        | YES             | YES             | `pair<iterator, bool>`                 |
+| `emplace`       | YES             | YES             | `void`                                 |
+| `operator[]`    | YES             | NO              | `T&`                                   |
+| `at`            | YES             | NO              | `T&`                                   |
+| `find`          | YES             | YES             | `iterator`                             |
+| `count`         | YES             | YES             | `size_type`                            |
+| `erase`         | YES             | YES             | `void`                                 |
+| `clear`         | YES             | YES             | `void`                                 |
+| `size`          | YES             | YES             | `size_type`                            |
+| `empty`         | YES             | YES             | `bool`                                 |                       
+| `lower_bound`   | YES             | YES             | `iterator`                             |
+| `upper_bound`   | YES             | YES             | `iterator`                             |
+| `equal_range`   | YES             | YES             | `pair<iterator, iterator>`             |
+
+### unordered_map
+There is also `std::unordered_map<T>` which is essentially just a hash map.
