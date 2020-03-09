@@ -1148,3 +1148,9 @@ class set {
 
 ### unordered_map
 There is also `std::unordered_map<T>` which is essentially just a hash map.
+# Algorithms
+The standard library has many built in algos that will simplify the life of the programmer espcially when working with containers.
+
+
+
+
