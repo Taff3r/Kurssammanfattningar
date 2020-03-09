@@ -961,6 +961,7 @@ void f(int) {cout << "C1::F(int)\n";}
 
 class C2: public C1 {
 public:
+    using C1::f;
     void f() {cout << "C2::f(void)\n";}
 };
 
