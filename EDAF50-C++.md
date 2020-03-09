@@ -976,14 +976,14 @@ b.f(10); // OK. Calls C1::f(int)
 ```
 
 ### Memory allocation of abstract types
-** YOU CANNOT ALLOCATE AN OBJECT OF AN ABSTRACT TYPE**
+** YOU CANNOT ALLOCATE AN OBJECT OF AN ABSTRACT TYPE **
 ```c++
 Dog d;
 Cat c;
 Bird b;
 Vector<Animal> zoo {d,c,b}; // ERROR cannot allocate an object of abstract type `Animal`
 ```
-The fix: *USE POINTERS*
+The fix: **USE POINTERS**
 ```c++
 Dog d;
 Cat c;
@@ -991,7 +991,7 @@ Bird b;
 Vector<Animal*> zoo {&d,&c,&b}; // OK!
 
 for (auto animal: zoo) {
-    x->speak(); 
+    animal->speak(); 
 }
 ```
 
