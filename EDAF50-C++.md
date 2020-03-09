@@ -921,7 +921,7 @@ class D1: private B { // private inheritance
 };
 ```
 | Inheritance type | Access. in B| Access. in D |
-|:-------:|:----- :|: -------.:|
+|-------|-----|-------|
 | `public`         | `public protected private` |`public protected private`|
 | `protected`      | `public protected private` | `protected protected private` |
 | `private`        | `public protected private` | `private private private`|
