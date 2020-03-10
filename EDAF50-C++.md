@@ -1160,7 +1160,7 @@ Ex.
 ```c++
 template <class Key, class Compare = std::less<Key>>
 class set {
-    explicit set (const Compare& comp = Compare());A
+    explicit set (const Compare& comp = Compare());
     //...
 };
 ```
@@ -1184,6 +1184,60 @@ class set {
 
 ### unordered_map
 There is also `std::unordered_map<T>` which is essentially just a hash map.
+
+# Lambdas / anon. functions
+Lambdas or anon. functions are useful for when you want to write function objects that are used seldomly or doesn't affect the internal state of the object but has to be used somewhere else, i.e. a comperator.
+Lambdas are written in the following form:
+```c++
+// [capture] (params) -> return_type {body};
+int x = 3;
+auto lambda = [&x] (int i) -> int {
+    x += i;
+    return x;
+};
+int result = lambda(3);
+cout << result << ": " << x << endl;  // 6: 6
+```
+
+As you could see the lambda is saved in a variable. But can also be written in-line, e.g. as a parameter for function.
+```c++
+vector<int> v = {2,4,l,2,8,6,7,5};
+v.erase(std::remove_if(v.begin(), v.end(), [] (const int& i) { return i <= 5; }), v.end()); // remove_if returns an iterator
+std::for_each(v.begin(), v.end(), [] (int& i) { i += 1;});
+std::for_each(v.begin(), v.end(), [] (const int& i) { cout << i << " ";}); // 9 7 8
+```
+## Anatomy of a lambda
+As mentioned above a lambda consists of three or four parts, the capture `[]`, the parameters `()`, the return type `-> type`, and the function body.
+
+### Capture
+The caputure part of the lambda "captures" variables available in the scope. They can either be captured by reference as in the example above, or by value with the added cost of copying. If you want to change the internal state of the current object you can also capture `this`.
+
+### Params
+The parameters to the lambda are different depending on where and how you use it. For example a call to sort would have two parameters at all times, which you have to beware of when you write the lambda. But you as the programmer can decide if you want to pass by reference or by value, and if you wish that the parameters should be `const`.
+
+Both the following examples work, but one calls by copy, and the other calls by const and reference.
+Call by copy:
+```c++
+vector<int> v = {1,2,3,4,5,6,7,8,9};
+std::sort(v.begin(), v.end(), [] (int lhs, int rhs) { return lhs > rhs;}); // Sort in descending order.
+std::for_each(v.begin(), v.end(), [] (const int& i ) {cout << i << " ";}); // 9 8 7 6 5 4 3 2 1
+```
+Call by reference with `const`:
+```c++
+vector<int> v = {1,2,3,4,5,6,7,8,9};
+std::sort(v.begin(), v.end(), [] (const int& lhs, const int& rhs) { return lhs > rhs;}); // Sort in descending order.
+std::for_each(v.begin(), v.end(), [] (const int& i ) {cout << i << " ";}); // 9 8 7 6 5 4 3 2 1
+```
+### Function body
+Can be as many lines as you wish. :)
 # Algorithms
 The standard library has many built in algos that will simplify the life of the programmer especially when working with containers.
+
+## finding/removing
+The standard library has multiple functions for finding and removing content from containers, such as `find`, `find_if`, `remove`, and `remove_if`.
+
+### `find` `remove`
+`find` and `remove` takes two iterators as arguments, as well as a value or a 
+
+
 
