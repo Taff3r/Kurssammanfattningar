@@ -718,7 +718,7 @@ public:
 
 stuct AlarmClock : public Clock {
     using Clock::Clock;
-    AlarmClock& tick(); // Hides Clock::tick() (Due to using?)
+    AlarmClock& tick(); // Hides Clock::tick() 
 private:
     int alarmTime;
 }
@@ -737,7 +737,7 @@ class Vector : public Container {
 public:
     Vector(int l = 0): p{new int[l]}, sz{l} {}
     ~Vector() {delete[] elem;}
-    int size() const override {return sz;} // NOTE Override <=> @Override in Java (C++11)
+    int size() const override {return sz;} // NOTE Override <=> @Override in Java (C++11) Not acctually necessary but is useful for preventing errors when writing code.
     int& operator[](int i) override {return elem[i];}
 private:
     int *elem;
@@ -974,7 +974,43 @@ b.f(); // OK. Calls C2::f(void)
 b.f(10); // OK. Calls C1::f(int)
 }
 ```
+### Calling functions of base class in derived class.
+**Exercise:** What is wrong with the following code?
+```c++
+#include <string>
+#include <iostream>
+using std::string;
+using std::ostream;
 
+class Base {
+public:
+    Base(string s) : basename(s){}
+    string name() { return basename; }
+    virtual void print(ostream& os) { os << basename; }
+private:
+    string basename;
+};
+
+class Derived : public Base {
+public:
+    Derived(string s, int i): Base(s), i(i){} // Call constructor of Base.
+    void print(ostream& os) override {print(os); os << " " << i;}
+private:
+    int i;
+};
+
+int main () {
+    Derived d("hello", 2);
+    d.print(std::cout);
+}
+```
+
+**Solution:** Calling `print` in derived results in an endless loop because it call itself and not the function in Base.
+**The fix:** In Deriveds `print` explicitly call the Base class's `print`.
+```c++
+// In Derived
+void print(ostream& os) override {Base::print(os); os << " " << i;} // Now works. :) (hello 2)
+```
 ### Memory allocation of abstract types
 ** YOU CANNOT ALLOCATE AN OBJECT OF AN ABSTRACT TYPE **
 ```c++
@@ -1149,8 +1185,5 @@ class set {
 ### unordered_map
 There is also `std::unordered_map<T>` which is essentially just a hash map.
 # Algorithms
-The standard library has many built in algos that will simplify the life of the programmer espcially when working with containers.
-
-
-
+The standard library has many built in algos that will simplify the life of the programmer especially when working with containers.
 
