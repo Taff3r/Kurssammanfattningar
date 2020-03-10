@@ -920,11 +920,11 @@ class D1: private B { // private inheritance
  // ..
 };
 ```
-| Inheritance type | Access. in B| Access. in D |
-|-------|-----|-------|
-| `public`         | `public protected private` |`public protected private`|
+| Inheritance type | Access. in B               | Access. in D                  |
+|------------------|----------------------------|-------------------------------|
+| `public`         | `public protected private` |`public protected private`     |
 | `protected`      | `public protected private` | `protected protected private` |
-| `private`        | `public protected private` | `private private private`|
+| `private`        | `public protected private` | `private private private`     |
 
 The accessibility inside D is **not** affected by the type of inheritance.
 
@@ -1066,26 +1066,26 @@ The *most derived class* (MiniBus) must call the *constructor of the grandparent
 ### Vector and deque
 `deque<T>`: **D**ouble-**e**nded **que**ue.
 
-| Function | `vector` | `deque` | Return type |
-|----------|----------|---------|-------------|
-| `clear()`|   YES    |   YES   | `void`      |
-| `size()` |   YES    |   YES   | `size_t`    |
-| `empty()`|   YES    |   YES   | `void`      | 
-| `push_back()`|   YES    |   YES   | `void`  | 
-| `pop_back()`|   YES    |   YES   |  `void`  |
-| `emplace_back()`|   YES    |   YES   | `void` |
-| `front()`|   YES    |   YES   | `T&` |
-| `back()`|   YES     |   YES   | `T&` |
-| `at()`|   YES       |   YES   | `T&` |
-| `operator[]()`|   YES    |   YES   | `T&` |
-| `assign()`|   YES    |   YES   | `void` | 
-| `insert()`|   YES    |   YES   | `void` |
-| `emplace()`|   YES    |   YES   | `void`|
-| `resize()`|   YES    |   YES   | `void` |
-| `reserve()`|   YES    |   YES   | `void`|
-| `push_front()`|   NO    |   YES   | `void`|
-| `pop_front()`|   NO    |   YES   | `void` |
-| `emplace_front()`|   NO    |   YES   | `void` |
+| Function         | `vector` | `deque` | Return type |
+|------------------|----------|---------|-------------|
+| `clear()`        |   YES    |   YES   | `void`      |
+| `size()`         |   YES    |   YES   | `size_t`    |
+| `empty()`        |   YES    |   YES   | `void`      | 
+| `push_back()`    |   YES    |   YES   | `void`      | 
+| `pop_back()`     |   YES    |   YES   |  `void`     |
+| `emplace_back()` |   YES    |   YES   | `void`      |
+| `front()`        |   YES    |   YES   | `T&`        |
+| `back()`         |   YES    |   YES   | `T&`        |
+| `at()`           |   YES    |   YES   | `T&`        |
+| `operator[]()`   |   YES    |   YES   | `T&`        |
+| `assign()`       |   YES    |   YES   | `void`      | 
+| `insert()`       |   YES    |   YES   | `void`      |
+| `emplace()`      |   YES    |   YES   | `void`      |
+| `resize()`       |   YES    |   YES   | `void`      |
+| `reserve()`      |   YES    |   YES   | `void`      |
+| `push_front()`   |   NO     |   YES   | `void`      |
+| `pop_front()`    |   NO     |   YES   | `void`      |
+| `emplace_front()`|   NO     |   YES   | `void`      |
 
 **NOTE** The `void` return types of `pop` functions. If you want to get the elements at the front and remove it you need to first do `front()` followed by a `pop_front`!
 
@@ -1166,21 +1166,21 @@ class set {
 ```
 ### Operations on sets and maps
 
-| Function        | `std::map`      | `std::set`      | return type                            |
-|-----------------|-----------------|-----------------|----------------------------------------|
-| `insert`        | YES             | YES             | `pair<iterator, bool>`                 |
-| `emplace`       | YES             | YES             | `void`                                 |
-| `operator[]`    | YES             | NO              | `T&`                                   |
-| `at`            | YES             | NO              | `T&`                                   |
-| `find`          | YES             | YES             | `iterator`                             |
-| `count`         | YES             | YES             | `size_type`                            |
-| `erase`         | YES             | YES             | `void`                                 |
-| `clear`         | YES             | YES             | `void`                                 |
-| `size`          | YES             | YES             | `size_type`                            |
-| `empty`         | YES             | YES             | `bool`                                 |                       
-| `lower_bound`   | YES             | YES             | `iterator`                             |
-| `upper_bound`   | YES             | YES             | `iterator`                             |
-| `equal_range`   | YES             | YES             | `pair<iterator, iterator>`             |
+| Function        | `std::map`      | `std::set`      | return type                |
+|-----------------|-----------------|-----------------|----------------------------|
+| `insert`        | YES             | YES             | `pair<iterator, bool>`     |
+| `emplace`       | YES             | YES             | `void`                     |
+| `operator[]`    | YES             | NO              | `T&`                       |
+| `at`            | YES             | NO              | `T&`                       |
+| `find`          | YES             | YES             | `iterator`                 |
+| `count`         | YES             | YES             | `size_type`                |
+| `erase`         | YES             | YES             | `void`                     |
+| `clear`         | YES             | YES             | `void`                     |
+| `size`          | YES             | YES             | `size_type`                |
+| `empty`         | YES             | YES             | `bool`                     |                       
+| `lower_bound`   | YES             | YES             | `iterator`                 |
+| `upper_bound`   | YES             | YES             | `iterator`                 |
+| `equal_range`   | YES             | YES             | `pair<iterator, iterator>` |
 
 ### unordered_map
 There is also `std::unordered_map<T>` which is essentially just a hash map.
