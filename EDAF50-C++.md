@@ -1361,3 +1361,77 @@ int main () {
     cout << res << endl; // hellotheregeneralkenobi!
 }
 ```
+### `for_each`
+`std::for_each` takes two iterators for the range of which the operation should be performed on, as well as a function describes the operation.
+`std::for_each` is the only of the functions recently described that makes sure that they are performed in the correct order. (Don't ask me why just says so in the documentation)
+```c++
+vector<int> v = {29, 12,15, 21,212, 400, 212};
+vector<int> to;
+std::for_each(v.begin(), v.end(), [&to] (int& i) {
+    // push odd numbers
+    if(i % 2){
+        to.push_back(i);
+    }
+});
+std::for_each(to.begin(), to.end(), [](const int& i) {cout << i << " ";});
+```
+# IO
+## Files
+The standard library has simple classes for handling input and output of files. `std::ifstream` and `std::ofstream`. Both are included in the `fstream` header.
+
+### `std::ifstream`
+`ifstream` **I**nput **f**ile **stream**. Can open files and read from them.
+
+| Function            | return type           |
+|---------------------|-----------------------|
+| `open`              |`void`                 |
+| `is_open`           |`bool`                 |
+| `close`             |`void`                 |
+| `rd_buf`            |`filebuf*`             |
+| `operator=`         |`ifstream&`            |
+| `operator>>`        |`ifstream&`            |
+| `read`              |`ifstream&`            |
+| `peek`              |`int`                  |
+| `gcount`            | `int`                 |
+| `eof`               | `bool`                |
+| `setstate`          | `void`                |
+**AND MANY MORE**
+
+Examples of use:
+```c++
+string line;
+// short hand for declaring the ifstream and then opening it.
+ifstream input("test.txt"); // Do you like jazz? I sure do!
+// loop while there is stuff to read.
+while(input >> line){
+    cout << line << " ";
+}
+cout << endl;
+input.close();
+```
+### `std::ofstream`
+`ofstream` **O**utput **f**ile **stream**. Can open files and write to them.
+
+| Function            | return type           |
+|---------------------|-----------------------|
+| `open`              |`void`                 |
+| `is_open`           |`bool`                 |
+| `close`             |`void`                 |
+| `rd_buf`            |`filebuf*`             |
+| `operator=`         |`ofstream&`            |
+| `operator<<`        |`ofstream&`            |
+| `put`               |`ofstream&`            |
+| `write`             |`ofstream&`            |
+| `seekp`             |`ofstream&`            |
+| `eof`               | `bool`                |
+| `setstate`          | `void`                |
+**AND MANY MORE**
+
+Examples of use:
+```c++
+string line = "HELLO MY BABY HELLO MY DARLING HELLO MY RAGTIME GAL!";
+ofstream output ("test.txt", std::ios_base::app); // append mode
+output << line;
+output.close();
+```
+# TODO: Rules of 3/5, copy, move, and swap.
