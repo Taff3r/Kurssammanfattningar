@@ -1230,6 +1230,7 @@ std::for_each(v.begin(), v.end(), [] (const int& i ) {cout << i << " ";}); // 9 
 ```
 ### Function body
 Can be as many lines as you wish. :)
+
 # Algorithms
 The standard library has many built in algos that will simplify the life of the programmer especially when working with containers.
 
@@ -1237,7 +1238,126 @@ The standard library has many built in algos that will simplify the life of the 
 The standard library has multiple functions for finding and removing content from containers, such as `find`, `find_if`, `remove`, and `remove_if`.
 
 ### `find` `remove`
-`find` and `remove` takes two iterators as arguments, as well as a value or a 
+`find` and `remove` takes two iterators as arguments, as well as a value to determine which element to find or remove.
+Important to know is that the value that is sent as a parameter **HAS TO OVERRIDE THE `operator==`**. If you check the implementation for the remove and find it explicitly uses the `operator==` to determine if the value is the one to remove or find.
+```c++
+template <class ForwardIterator, class T>
+ForwardIterator remove (ForwardIterator first, ForwardIterator last, const T& val){
+  ForwardIterator result = first;
+  while (first!=last) {
+    if (!(*first == val)) {
+      *result = move(*first);
+      ++result;
+    }
+    ++first;
+  }
+  return result;
+}
+```
+As you can see the find/remove function returns an iterator to the position of the removed/found element.
 
+NOTE! That the length of the vector is **NOT** changed but the value is removed. This is best demonstrated through the following example:
 
+```c++
+vector<int> v = {1,2,3,4,5,6};
+cout << v.size() << endl; // 6
+std::remove(v.begin(), v.end(), 3);
+cout << v.size() << endl; // 6
+std::for_each(v.begin(), v.end(), [] (const int& i) {cout << i << " ";});
+cout << endl;
+std::remove(v.begin(), v.end(), 5);
+cout << v.size() << endl; // 6
+std::for_each(v.begin(), v.end(), [] (const int& i) {cout << i << " ";}); // 1 2 4 6 6 6
+```
+To solve this issue in the example above it is better to use a combination of `find`/`remove` and the `erase` function for the container.
+```c++
+vector<int> v = {1,2,3,4,5,6};
+cout << v.size() << endl; // 6
+auto iterator = std::remove(v.begin(), v.end(), 3);
+v.erase(iterator);
+cout << v.size() << endl; // 5
+std::for_each(v.begin(), v.end(), [] (const int& i) {cout << i << " ";}); // 1 2 4 5 6
+```
 
+### `find_if` and `remove_if`
+`find_if`/`remove_if` just like `remove`/`find` take two iterators as arguments as well as an additional lambda/function. The function/lambda describes how the element should be selected. 
+
+Ex.
+```c++
+vector<int> v = {1,2,3,4,5,6};
+v.erase(std::remove_if(v.begin(), v.end(), [] (int& i) {return i < 4;}), v.end());
+std::for_each(v.begin(), v.end(), [] (const int& i) {cout << i << " ";}); // 4 5 6 
+```
+Just like `remove` and `find` doesn't have to power to alter the container. An additonal call to `vector.erase()` has to be done, like in the example above.
+
+# Transform, copy_if, accumulate, and for_each
+### `std::transform`
+`std::transform` is the equivalent to map in many languages taking a "stream" of inputs and doing operations on those inputs.
+The input to `transform` is three iterators, the first two is the range for the transform and the third being the start of the application of the function(?), and a function or a function object (functor).
+
+```c++
+vector<int> v = {1,2,3,4,5,6};
+vector<int> v2 = {1,2,3,4,5,6};
+struct Functor {
+public:
+    Functor(int x): x(x){};
+    int operator()(int& i) { return i +=this->x;  }
+private:
+    int x;
+};
+
+auto lambda = [] (int& i) -> int { return i+=1; };
+// With lambda
+// NOTE! that this starts the transformation at the second element of v by moving the vector forward one position.
+std::transform(++v.begin(), v.end(), ++v.begin(), lambda); 
+std::for_each(v.begin(), v.end(), [](const int& i) {cout << i << " ";}); // 1 3 4 5 6 7
+cout << endl;
+std::transform(v2.begin(), v2.end(), v.begin(), Functor(3));
+std::for_each(v2.begin(), v2.end(), [](const int& i) {cout << i << " ";}); // 4 5 6 7 8 9
+```
+### `copy_if`
+`copy_if` is the equivalent to filter in many languages.
+`copy_if` takes four arguments the beginning of the origin, the end of the origin, the beginning of the output, and a function that describes if the element should be copied.
+```c++
+vector<int> v = {1,2,3,4,5,6};
+vector<int> v2;
+v2.resize(v.size()); // NOTE! The output vector must have available space
+std::copy_if(v.begin(), v.end(), v2.begin(), [&v2] (const int& i) { return i < 4;});
+std::for_each(v2.begin(), v2.end(), [](const int& i) {cout << i << " ";}); // 1 2 3 0 0 0
+cout << endl;
+v2.erase(std::remove(v2.begin(), v2.end(), 0), v2.end());
+std::for_each(v2.begin(), v2.end(), [](const int& i) {cout << i << " ";}); // 1 2 3
+```
+### Accumulate
+`std::accumulate` is the equivalent to reduce in many other languages, and is defined in the `numeric` header and **NOT** in `algorithm`.
+`std::accumulate` takes two iterators and a value that should be accumulated.
+
+```c++
+vector<int> v = {1,2,3,4,5,6};
+auto res = std::accumulate(v.begin(), v.end(), 0);
+cout << res << endl; // 21
+```
+Elements that should be accumulated has to implement the `operator+` for the relevant input.
+```c++
+class StringBuilder {
+private:
+    string s;
+public:
+    StringBuilder(string s = ""): s(s){};
+    // Note that operator + has to be defined for the relevant input, which in this case is std::strings.
+    StringBuilder& operator + (string& rhs){ s += rhs; return *this;};
+    // to be able to print StringBuilder
+    friend ostream& operator << (ostream& os, StringBuilder& sb);
+};
+
+ostream& operator << (ostream& os, StringBuilder& sb) {
+    os << sb.s;
+    return os;
+}
+
+int main () {
+    vector<string> v = {"hello","there","General","Kenobi","!"};
+    auto res = std::accumulate(v.begin(), v.end(), StringBuilder());
+    cout << res << endl; // hellotheregeneralkenobi!
+}
+```
