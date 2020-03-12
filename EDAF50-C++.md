@@ -1434,4 +1434,118 @@ ofstream output ("test.txt", std::ios_base::app); // append mode
 output << line;
 output.close();
 ```
-# TODO: Rules of 3/5, copy, move, and swap.
+
+# Moving objects
+Unlike copying objects which is quite common, C++11 supports the option to move objects, that is move the contents from one object to another, leaving the origin objects "empty". Move should be used when the circumstances instead of copying when the object is destroyed immediatly after copying, then moving would give a greated performance boost. Instead of copying the contents by value, the memory addresses are changed.
+
+## rvalues and lvalues
+There are two kinds of expressions in C++
++ **lvalue**
+    - Expressions that refer to a memory location is "lvalue" expression. An lvalue may appear as eithher the left-hand side or right-hand side of an assignment. **All variables are lvalues.**
++ **rvalue**
+    - The term rvalue refers to a data value that is stored at some address in memory. An rvalue is an expression that cannot have value assigned to it, which means an rvalue may appear on the the **right** but **NOT** on the **left** hand side of an assignment. **Numeric literals are rvalues and so may not be assigned and can not appear on the left-hand side.** 
+
+Generally speaking, an lvalue expression refers to an object's identity whereas rvalue expression refers to an object's value.
+
+### rvalue references
+To support move operations the new standard supports a new kind of reference: **rvalue references**. An rvalue references is a reference that must be bound to an rvalue. An rvalue reference is obtained by using `&&` rather than `&`. rvalue references have the important property that they may be bound only to an object that is abou to be destroyed. As a result, we are free to "move" resoruces from a rvalue reference to another object.
+Like any reference, an rvalue reference is just anothehr name for an object. As we know, we cannot bind regular references (**lvalue references**) to expresssions that require conversion, to literals, or to expression that return an rvalue.
+Rvalue refernces have the opposite binding properties: We can bind an rvalue reference to these kinds of exporesiosn, but we cannot directly bind an rvalue reference to an lvalue.
+
+```c++
+int i = 42;
+int& r = i; // OK refers to i.
+int &&rr = i; // ERROR cannot bind an rvalue reference to an lvalue.
+int &r2 = i * 42; // ERROR i * 42 is an rvalue.
+const int &r3 = i * 42; // OK we can bind a refernce to const to an rvalue.
+int &&rr2 = i * 42; // OK bnd rr2 to the RESULT of the mulitplication.
+```
+Functions that return lvalue references, along withh the assignment, subscript, dereferences, and prefix increment/decrement operators are all examples of expressions that return lvalues. We can bind an lvalue reference to theh result of any expressions.
+Functions that return a nonreferences type, along with theh arithmetic, relational, bitwise, and postfix increment/decrement operators, all yield rvalues. We cannot bind an lvalue reference to these expressions, but we can bind either an lvalue reference to const or an rvalue reference to such expressions.
+
+### lvalues persist, rvalues are ephemeral
+Because rvalue references can noly be bound to tempories, we know that:
++ The referred-to object is about to be destroyed.
++ There can be no other users of that object.
+
+## the library `move` function
+Althhoughh we cannot directly bind an ravlue reference to an lvalue, we cna explictly cast an lvaue to its corresponding ralveu reference type. We can also obtain an rvalue reference bund to an lvalue by calling a new library function named `move` which is included in the `utility` header. The `move` function returns an rvalue reference to its given object.
+```c++
+int &&rr3 = std::move(rr1); // OK
+```
+Calling `move` tells theh compiler that we hhave an lvalue that we want to treat as if it were an rvalue. It is essential to realize thaht theh call to move promises thaht we do not intend to use `rr1` again except to assign to it or to destroy it. After a call to `move` we cannot make any assumptions about theh value of theh moved-from object. **We can destory a moved-from object and can assign a new value to, but we cannot use the value of a moved-from object.**
+
+** Always use std::move to avoid name collisions, so do NOT declare a `using` for std::move!**
+# Rule of 3 (5)
+"A class that defines any of the following should also define the other."
++ destructor (`~Foo()`)
++ copy constructor (`Foo(const Foo& init)`)
++ copy assignment (`operator = (const Foo& rhs)`)
+
+Roughly speaking, if a class owns a resource it should implement a destructor and in turn implement the other two.
+
+In C++11 the rules have been extended from three to five. Because C++11 implements *move semantics*. Allowin destination objects to *grab* (or *steal*) data from temporary objects. In addition to the first three rules the class has to implement the two following rules:
+
++ move constructor.
++ move assignment operator.
+
+### move constructor and move assignment operator
+An example of a simple move constructor and move assignment operator as well as how they are used can be seen below. 
+
+```c++
+class MoveTest {
+private:
+    string* s;
+public:
+    MoveTest(string* s) : s(s){}
+    ~MoveTest(){delete s;}
+    MoveTest(MoveTest&& s) noexcept : s(s.s) {
+        s.s = nullptr; // Leave moved-from object in state that in which it is safe to run the destructor.
+    }
+    MoveTest& operator=(MoveTest&& rhs) {
+        if(this != &rhs) {
+            free(s); // Free existing elements.
+            s = rhs.s; // Take over resources from rhs.
+            rhs.s = nullptr; // Leave moved-from object in state that in which it is safe to run the destructor.
+        }
+        return *this;
+    }
+    void move(MoveTest&& o) noexcept {
+        this->s = o.s;
+    }
+    string& str() { return *s; }
+};
+
+int main () {
+    MoveTest x(new string("hello"));
+    MoveTest k(new string("there"));
+    MoveTest p = std::move(x); // Move Constructor
+    cout << &p.str() << endl; // Address
+    cout << p.str() << endl;  // hello
+    cout << &x.str() << endl; // 0 / nullptr
+    cout << x.str() << endl; // ERROR (segfault) after move the moved from object is as good as destroyed.
+    k = std::move(p); // Move assignment operator
+    cout << &k.str() << endl; // Same address as above.
+    cout << k.str() << endl;  // hello
+}
+```
+# `swap`
+`std::swap` can be used when the objects implements the move-assignment operator. It simply swaps the values of two variables.
+
+```c++
+MoveTest x(new string("there"));
+MoveTest k(new string("hello"));
+
+cout << &x.str() << endl; // orginal address of string in x.
+cout << &k.str() << endl; // orginal address of string in k.
+cout << x.str() << endl; // there
+cout << k.str() << endl; // hello
+
+std::swap(x, k);
+
+cout << &x.str() << endl; // orginal address of string in k.
+cout << &k.str() << endl; // orginal address of string in x.
+cout << x.str() << endl; // hello
+cout << k.str() << endl; // there
+```
+
