@@ -650,8 +650,25 @@ for(int& d : v) { // Can use for-each since std::vector has iterators.
 }
 // 5 6 7 8 9
 ```
-`TODO: Implement a iterator yourself`
+### Templates for iterators
+Each iterator has a special `tag` that describes how it functions. These are, `BidirectionalIterator`, `RandomAccessIterator`, `ForwardIterator`, `InputIterator`, and `OutputIterator`.
+When inherting or writing templates for iterators it is important to specify which behaviour the iterator should exhibit.
+These behaviours are:
++ `ForwardIterator`: Can only move forward, i.e only use `operator ++`.
++ `InputIterator`: Can only move forward, use when you intend to read from the iterator.
++ `OutputIterator`: Can only move forward, use when you intend to write to the iterator.
++ `BidirectionalIterator`: Can move both ways. 
++ `RandomAccesIterator`: Can access elements at an arbitrary offset position relative to the element they point to. 
 
+Input and output iterators are the "weakest" as in the defintion of what they can do. As RandomAccess, Bidirectional, and Forward iterators are also valid Input/Output iterators.
+
+### Iherting from iterators.
+When inherting from iterators the tag of iterator must be specified. Inherting can look something like this.
+```c++
+class sort_insert_iterator : std::iterator<input_iterator, void, void, void, void> {
+    // ...
+}; 
+```
 # Polymorphism and Inhertiance
 ### Static binding
 The meaning of a construct is decided at *compile-time*.
@@ -1050,13 +1067,13 @@ class MiniBus : public Bus, public Car { //... };
 ### Virtual inheritance
 Virtual inheritance: Derived classes share the base class instance. (The base class is only included once)
 ```c++
-class MotorVehical{ //... };
+class MotorVehicle { //... };
 class Bus : public virtual MotorVehicle { //... }; // NOTE VIRTUAL
 class Car: public virtual MotorVehicle { //... };  // NOTE VIRTUAL
 class MiniBus : public Bus, public Car { //... };
 ```
 The *most derived class* (MiniBus) must call the *constructor of the grandparent* (MotorVehicle).
-
+If we did not use virtual inheritance the minibus would inherit members from MotorVehicle twice. When using virtual inheritance it specifies that Car and Bus are willing to share members inherited from MotorVehicle.
 # Containers
 ## Sequences (Homogeneous)
 + `vector<T>`
