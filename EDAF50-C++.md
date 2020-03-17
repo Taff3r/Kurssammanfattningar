@@ -669,6 +669,8 @@ class sort_insert_iterator : std::iterator<input_iterator, void, void, void, voi
     // ...
 }; 
 ```
+
+An example of a custom container with an implemented iterator can be seen [here](https://github.com/Taff3r/Kurssammanfattningar-och-studietips/blob/master/EDAF50-C%2B%2B-Exams/practice/simplevector.h)
 # Polymorphism and Inhertiance
 ### Static binding
 The meaning of a construct is decided at *compile-time*.
