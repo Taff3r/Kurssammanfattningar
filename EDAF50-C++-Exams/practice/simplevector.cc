@@ -70,7 +70,16 @@ template <typename T>
 bool SimpleV<T>::operator != (const SimpleV<T>& rhs){
    return !(*this == rhs);
 }
-
+struct StringWrapper {
+    std::string s;
+    StringWrapper(const std::string& lit) : s{lit}{
+        std::cout << "c++" << std::endl;
+    }
+    StringWrapper(const char* lit) : s{lit}{
+        std::cout << "c" << std::endl;
+    }
+    void print() {std::cout << "sw " << s << std::endl;}
+};
 int main(){
 SimpleV<std::string> v (new std::string[4], 4);
 std::string s[] = {"hello", "there", "general", "kenobi"};
@@ -78,5 +87,8 @@ std::copy(s, s+4, v.begin());
 for(auto& s: v){
     std::cout << s << " ";
 }
+std::string str = "hello there";
+StringWrapper p(str);
+p.print();
 }
 
