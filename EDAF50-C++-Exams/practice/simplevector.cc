@@ -72,18 +72,11 @@ bool SimpleV<T>::operator != (const SimpleV<T>& rhs){
 }
 
 int main(){
-    SimpleV<int> sv(new int[5], 5);
-    for(size_t i = 0; i != sv.size(); ++i){
-        sv[i] = i;
-    }
-    std::cout << (sv == sv)  << std::endl;
-    SimpleV<int> c(new int[5], 5);
-    sv.resize(10);
-    std::for_each(sv.begin(), sv.end(), [] (int& i) {std::cout << i << " ";});
-    std::cout << std::endl;
-    c.resize(10);
-    std::copy(sv.begin(), sv.end(), c.begin());
-    for(auto& i : c){
-        std::cout << i << std::endl;
-    }
+SimpleV<std::string> v (new std::string[4], 4);
+std::string s[] = {"hello", "there", "general", "kenobi"};
+std::copy(s, s+4, v.begin());
+for(auto& s: v){
+    std::cout << s << " ";
 }
+}
+
