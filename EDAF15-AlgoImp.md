@@ -173,7 +173,7 @@ When the rename register is updated, the instrcutons with a tag waiting for that
 Typically on a Power, the integer, floating point, vector, and condition registers are renamed.
 On some Power processors earlier than 8, the link register was not renamed.
 
-## Cache Memories
+## Cache Memories (Level 3)
 One of the greatest inventions in recent computer history.
 There is fundemental trade-off between speed and size of memory. A memory component is either fast and small or big and slow. (Or a compromise inbetween)
 Programmers of course want the best of both worlds, both fast and big.
@@ -321,4 +321,95 @@ Let us test it on the factorial program.
 |32    |77     |50         |11      |0           |56.8         |
 |64    |77     |50         |11      |0           |56.8         |
 |128   |77     |50         |11      |0           |56.8         |
+
+As seen in table:
+* All writes always miss - the factorial program writes to anew places on the stack.
+* The reads benefit from a larger cache since then what `fac(5)` and `fac(4)` saved on the stack will remain in the cahce when they later readthe saved parameter and return values.
+* The 27 read misses are due to instruction which are fetched for the first time.
+
+## Cache associativeity (Level 4)
+Our cache is very small, only a half KB. Usually the cache clossets to the process, called the L1 cache is 32KB or 64KB.
+Having 128 comparators might be feasible but hundereds of them is too much. That is a problem we must address.
+It is much better read and write multiple words from/to memory rather than only one at a time. This we will also address.
+
+In our cache, a word can be put in any row in the cache.
+That means every row must be checked to see if the address matches.
+Our cache is called a fully-associative cache. Theses are expensive.
+If there is a function (in hardware) which maps an address to a particular row, then we only need one comparator, since there is only one row to look in. That is called as *direct-mapped cache.* (kinda like a hash-table?)
+In a direct-mapped cache we can use the least significant bits of the address as the function.
+Why should we not use the most significant bits as the function instead?
+If we use the MSB's the result of the function will have a larger probability of having the same result. (Compare to using a hash-table with the same input)
+
+The purpose is to avoid so many comparators.
+In the C code the loop will disappear.
+If the number of row is the cache is a power of two we can do as follows _instead of having a loop:_
+
+```c
+i = address & (CACHE_ROWS - 1);
+if (cache_array[i].valid
+    && cache_array[i].address == address)
+    data = cache_array[i].data;
+    // etc as in LD: above
+```
+
+In direct mapped cache, we can be unlucky and having two frequently used utems which are mapped to the same row in the cache which will result in many cache misses when they replace each other.
+A compromise is so called *N-way asssociative cache.*
+Now we group the cache row into set, where each set has N rows. 
+The number of sets, `CACHE_SETS = CACHE_ROWS / N`.
+An address is now mapped to a set and within its set, the address can be put in any of the N rows.
+N comparators are needed now, and typical values of N is 2, 4, or 8.
+
+How accessing data in an N-way associative cache looks like for our C-computer/cpu:
+
+
+```c
+i = address & (cache_sets - 1);
+for (j = 0; j < N; j++) {
+    if (cache_array[i][j].valid
+            && cache_array[i][j].addresss == address) {
+        data = cache_array[i][j].data;
+        found = true;
+        break;
+    }
+}
+```
+In a fully assoicative cache, `CACHE_SETS = 1`
+In a direct-mapped cache, N = 1.
+
+### Exploiting Spatial Locality (Level 4)
+So far we have only transferred one word between the cache and the memory.
+It is more efficitnet if mulitple words, say 8, 16, or 32 words transferred at a time.
+The Power8 at LTH transfers 128 bytes at a time.
+Assume instead that our cache block size is 8 words.
+Then we can eg. fetch eight instructions at a time.
+Since we store 8 consecutive words from memory in a cache row, we only need, of course, to know the addres of the first word in the block.
+
+#### Cache Block Number
+
+We can now vierw memory as an array, not of words, but of cache blocks.
+When the cache block size is eight words (or 2^3 words) we get the cache block number of a word by dividing the word number by eight.
+Alternatively we shift the word number, ie the address, to the right by three, ie, we throw the last three bits of address away.
+The number of words in a cache block is called the `BLOCK_SIZE`.
+Acctually the `BLOCK_SIZE` is the number of bytes but we simplify the presentation and only consider words.
+
+C-code:
+
+```c
+block_num = address / BLOCK_SIZE;
+i = block_num & (CACHE_SETS - 1);
+for (j = 0 ; j < N ; j++) {
+    if (cache_array[i][j].valid 
+            && cache_array[i][j].block_num === block_num) {
+        k = address & (BLOCK_SIZE - 1);
+        data = cache_array[i][j].data[k];
+        found = true;
+        break;
+    }
+}
+```
+### Cache Levels and Matrix Multiplication (Level 3)
+Caches are divided into different levels (L1, L2, etc.). The closer they are to the pipeline the closer the lower level it has. (L1 is closer to pipeline.)
+The caches are also sometimes (L1 can be, while L2 is not, or none) divided into two different caches, one for instructions and for data. The reason is that data can read/written while isntrcutions are only fetched. Making it possible to optimize for reading and writing for the data cache. It also makes it possible to access both caches concurrently.
+
+
 
