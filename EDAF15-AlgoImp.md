@@ -172,9 +172,153 @@ When the rename register is updated, the instrcutons with a tag waiting for that
 *Not all registers are renamed.*
 Typically on a Power, the integer, floating point, vector, and condition registers are renamed.
 On some Power processors earlier than 8, the link register was not renamed.
+
 ## Cache Memories
-TODO: 
+One of the greatest inventions in recent computer history.
+There is fundemental trade-off between speed and size of memory. A memory component is either fast and small or big and slow. (Or a compromise inbetween)
+Programmers of course want the best of both worlds, both fast and big.
+Without cache memories it could take several hundered clock cycles to read data from RAM.
+
+Two observations where made about memory usage.
+### First observation
+The first observation is that programs usually access memory somewhat regularly, which is called _locality_.
+
+*Temporal locality* (tidslokalitet) means that if a program has accessed a particular location _A_ in memory, it is likely it will access A again soon.
+
+Examples of Temporal locality:
+* The instructions in a loop are accesssed next iteration as well.
+* The loop index variable is usually accessed frequently.
+* The stack space is often accessed again when a new function is called. (since that space is reused.)
+* An object is typically accessed for a while and the the progream is done with it.
 
 
 
+*Spatial locality* (rumslokalitet) means that if a program has accessed a word at address _A_ in memory, it is likely it will soon access the word at address A+1.
+
+Examples of Spatial locality:
+* The instructions are accessed one after the other - until there is a branch.
+* Elements of an array are often accessed one after the other.
+* Often several variables in an object is accessed and if these are put close together (by the programmer) then there will be spatial locality.
+
+### Exploiting Temporal locality:
+What is needed is a small memory on the same chip as the processor.
+If we describe our *hardware* in C, then a CPU could look like the following.
+```c
+typedef struct {
+    int reg[32];
+    int pc;
+    struct {
+        bool valid;
+        int data;
+        int address;
+    } cache_array[8];
+} cpu_t;
+```
+
+We have now a cache which can store eight popular words.
+The cache array contains eight pairs of *data* and *address*.
+There is also a boolean called valid which tells us whether the data and addresss are valid for that row.
+Recall that on paper we can write question makrs but the machine can only write ones and zeroes and cannot see whether they make sesnes so a separate bit must tell wheter they mean anything useful.
+Suppose the compiler has decided that a global variable X should be put at the address 293, or 0x125, or 0001 0010 0101.
+
+
+When the program (or CPU) want to read variable X, it should check whether any of the eight rows has `valid = true` and `addresss = 293`.
+If the CPU found one suc row (or, let's call it line), then the CPU can take the data from that line and avoid waiting for the slow memory!
+We must call this event something: a *cache hit*.
+It can save us 100 clock cycles.
+
+#### Load instruction 
+*In hardware all iterations are executed concurrently!!*
+The openmp direction is here to amke you alerat on that this is _not_ a sequential loop.
+
+```c
+case LD:
+    found = false;
+    address = source1 + constant;
+    #pragma omp parallel for
+    for(i = 0 ; i < 8; i++){
+        if (cache_array[i].valid &&
+            cache_array[i].address == address) {
+            data = cache_array[i].data;
+            found = true;
+            break;
+        }
+
+    }
+```
+
+#### Cache replacement
+If data was found in the cache we use that otherwise we need to read from RAM and write what we found to the cache.
+We need to select one line.
+If there is one line with `valid = false` then we select that one.
+Otherwise, for now, we take a random line (row).
+If the row we selected had valid data, we need to copy the old data contents to memory (otherwise, it's lost).
+Then we read our data from memory.
+The we write our data into the selected row, set the address to our address and set valid to true.
+
+Example C-code:
+
+```c
+if (!found) {
+    i = select_row();
+    if (cache_array[i].valid) // save old data to memory.
+        memory[cache[array[i].address] = cache_array[i].data;
+   
+    // read our data from memory.
+    data = memory[address];
+    
+    // save our data in the cache
+    cache_array[i].data = data;
+    cache_array[i].address = address;
+    cache_array[i].valid = true;
+}
+```
+
+*The process is similar for a Store*
+```c
+case ST:
+    found = false;
+    address = source2 + constant;
+    data = source!;
+    #pragma omp parallel for
+    for (i = 0; i < 8; i++) {
+        if (cache_array[i].valid &&
+                cache_array[i].address == address){
+            cache_array[i].data = data;
+            found = true;
+            break;
+        }
+    }
+
+    if (found) 
+        break;
+
+    i = select_row();
+    if(cache_array[i].valid)
+        memory[cache_array[i].address] = cache_array[i].data;
+    cache_array[i].data    = data;
+    cache_array[i].address = address;
+    cache_array[i].valid   = valid;
+```
+Next time we want to read or write that variable it is likely that it will be found in the cache.
+
+#### The Loop - isn't it slow?
+No! Because it doesn't exist!
+It only exists in the software model of the hardware.
+Recall: *in hardware the loop is run in parallell.*
+In our case, there are eight so called *comparators* which compare the address requested with address in its row says *"here!"* if the addreses are equal and the valid bit is true.
+
+### A look at our cache
+Our cache does not exploit spatial locality, yet.
+Instructions may also be put in the cache.
+Hit rate is the fraction of hits in the cache.
+Let us test it on the factorial program.
+
+|#rows | reads | read hits | writes | write hits | hit rate (%)|
+|------|-------|-----------|--------|------------|-------------|
+|8     |77     |21         |11      |0           |23.9         |
+|16    |77     |36         |11      |0           |40.9         |
+|32    |77     |50         |11      |0           |56.8         |
+|64    |77     |50         |11      |0           |56.8         |
+|128   |77     |50         |11      |0           |56.8         |
 
