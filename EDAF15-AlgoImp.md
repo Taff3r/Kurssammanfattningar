@@ -412,4 +412,328 @@ Caches are divided into different levels (L1, L2, etc.). The closer they are to 
 The caches are also sometimes (L1 can be, while L2 is not, or none) divided into two different caches, one for instructions and for data. The reason is that data can read/written while isntrcutions are only fetched. Making it possible to optimize for reading and writing for the data cache. It also makes it possible to access both caches concurrently.
 
 
+## The C Preprocessor (Level 3)
+The C preprocessor has several directives.
 
+### Predefined Macros
+A macro is an indentifier such that when the preprocessor "sees" this definition it replaces it with what it was defined as. (A text replacement)
+
+Some standard macros are:
++ __FILE__ : Expands to the source file name.
++ __LINE__ : Expands to the current line number.
++ __DATE__ : Expands to the date of translation.
++ __TIME__ : Expands to the time of translation.
++ __STDC__ : Expands to 1 if the implementation is conforming.
++ __STDC_HOSTED__ : Expands to 1 if the implmentation is hosted, and to 0 if it is free-standing. 
++ __STDC_VERSION__ : Expands to 199901L. (For C99)
+
+Some implmentation defined macros:
++ __STDC_IEC_559__ : Expands to 1 if IEC60559/IEEE 754 is supported (except complex arithmetic).
++ __STDC_IEC_559_COMPLEX__ : Expands to 1 if complex arithmetic in IEC 60559/IEE 754 is supported.
++ __STDC_ISO_10646__ : Expands to an integer `yyyymmL` to indicte which values of `wchar_t` are supported.
++ __STDC_IEC_559__ : Expands to 1 if IEC60559/IEEE 754 is supported (except complex arithmetic)
+*If a predefined macro is undefined then behaviour is undefined.*
+
+
+### Defining Macros
++ No whitespace between macro name and left parenthesis in function-like macro.
++ A fencing-like macro not followed by left parenthesis is not expanded.
+
+Ex. 
+```c
+#define obj (a) a+1
+#define bad(a)  a+1
+#define good(a) (a+1)
+
+obj(3)       => (a) a+1(3)
+bad(3)*10    => 3+1*10
+good(3)*10   => (3+1)*10
+(good)(3)*10 => (good)(3)*10
+```
+
+### Conditional Inclusion
+Conditionally include code in source if a preprocessor "variable" is defined.
+```c
+#define DEBUG
+
+#ifdef DEBUG
+    printf("here we go: %s %d\n", __FILE__, __LINE__);
+#endif
+
+#ifndef DEBUG
+#endif
+
+#if expr1
+#elif expr2
+#elif expr3
+#else
+#endif
+```
+
+### More directives
+```c
+#define DEBUG 12
+#define DEBUG 13    // invalid: cannot redefine a macro
+#undef DEBUG
+#define DEBUG 13    // OK. undefined first
+
+#line 9999 "a.c"    // will set __LINE__ and __FILE__
+
+#ifndef __STDC__
+#error this will not compile with a pre-ANSI compiler!
+#endif
+
+#pragma directive from user to compiler
+_Pragma("directive fromuser to compiler") // These two lines are equivalent.
+```
+
+### `#` and `##` operators (Level 5)
+Operator # must preced a macro parameter and it expands to a string.
+```c
+#define xstr(a) #a
+#define str(b)  xstr(b)
+#define c       12
+
+xstr(c)  =>  "c"
+str(c)   =>  "12"
+
+#define fatal(expr) { \
+    fprintf(stderr, "%s line %d in \"%s\": fatal error %s = %d\n", \
+    __FILE__, __LINE__, __func__, #expr, expr); exit(1); }
+int x = 2;
+fatal(x); => prog-015.c line 15 in "main": fatal error x = 2
+```
+Operator `##` concatenates the tokens to the left and right.
+```c
+#define name(id, type) id##type
+name(x,int) => xint
+
+#define a  x ## y
+#define xy 12
+int b = a; // init b to 12;
+```
+
+
+## Writing safe macros (Level 3)
+Sometime it is convenient to have a variable number of arguments to a function-like macro, eg. when using printf.
+Without `__VA_ARGS__`, the number of arguments must match the number of parameters.
+
+Ex.
+```c
+#ifdef DEBUG
+#define pr(...) fprintf(stderr, __VA__ARGS);
+#else
+#define pr(...) /* do nothing */
+#endif
+int x = 1, y = 3;
+pr("x = %d, y = %d\n", x, y); => x = 1, y = 3
+```
+
+### Macros can improve performance
+Since macros are expanded in the called function they eliminate the overhead of calling functions.
+Macros can cause problems however:
+```c
+#define square(a)  a*a
+x = 100 / square(10)  => 100 / 10 * 10
+```
+
+Use parentheses:
+```c
+#define square (a)   ((a)*(a))
+y  = square(cos(x)) // valid but slow
+z  = square(++y)    // wrong
+```
+Not the `cos` function is called twice
+Modifying `y` twice is wrong.
+
+### Macros with statements
+Suppose we want to swap the values of two variables using a macro:
+```c
+#define SWAP(a,b)   tmp=a; a = b; b = tmp;
+
+if(a < b)
+    SWAP(a,b);
+```
+What happens?
+How about:
+```c
+#define SWAP(a,b) {int tmp = a; a = b; b = tmp;}
+
+if(a < b)
+    SWAP(a,b);
+else
+    printf("syntax error!\n");
+```
+A compound statement cannot be floowed by a semicolon.
+Neither of above functions correctly.
++ First one expands to multiple lines which makes the first only perform `tmp=a;`
++ Second one has has an extra `;` followed by a block which is incorrect syntax.
+We can instead do as follows:
+```c
+#define SWAP(a,b) do {int tmp = a; a = b; b = tmp;} while(0) // NOTE missing ; (Not necessary since we end SWAP with ;)
+```
+This macro will solve both of the previous problems.
+
+
+## Statements (Level 3)
+
+There are several statements in C.
++ Labeled statements
++ Compund statements
++ Expression and null statements
++ Selection statements
++ Iteration statements
++ Jump statements
+
+#### Labeled statements
+Labels i.e. targets of `goto` statements.
+Integer constant case statements in a switch.
+The default statement which a switch will jump to if no case matches.
+
+#### Compound statement
+A compound statement, a block, can conatin a sequence of statements and declarations.
+For instance:
+```c
+int main(void)
+{
+    int a;
+    a = 1;
+    int b;
+    b = 2;
+}
+```
+
+Mixing declarations and statements comes from c++ where some objects declared as local variables need this.
+In C there is no need to do this, and main reason is simply: "it's ugly".
+
+The following is cleaner:
+```c
+int main(void)
+{
+    int a;
+    int b;
+
+    a = 1;
+    b = 2;
+}
+```
+
+#### Expression and null statements
+Most statements are expression statements, including assignements.
+A `null` statement does nothing and consists only of a semicolon.
+Null statements are used at end of blocks to avoid syntax errors.
+```c
+int main(void)
+{
+    /* ... */
+    if (p == NULL)
+        goto cleanup;
+
+    /* ... */ 
+
+    cleanup:
+        ;
+}
+```
+
+#### Selection statements (if and switch)
+The controlling expression in a switch must be an integer.
+If there are initializations in the compound block of a switch they are not executed.
+```c
+switch (a) {
+    int b = 10;
+case 1:
+    printf("a is a one\n");
+    a = b; // invalid. b not defined.
+           // falls through to case 2.
+case 2: printf("a is two\n");
+        break;
+default:
+    printf("hello from default\n");
+}
+```
+
+#### Iteration statements
+Three loops:
++ for
++ while
++ do-while
+
+A for-loop can have declaration statement:
+```c
+for (int i = 0; i < N; ++i)
+    f(i);
+```
+
+This was partly introduced to C due to c++ already had it and partly to a false assumption that optimizing compilers would be helped by having the declaration close to the for-loop. Which is nonsense.
+
+#### New in C11: exact rules for optimizing away loops
+Consider the following loop:
+```c
+int i;
+unsigned b = 0;
+for (i = 1; i; b += 1)
+    ;
+abort();
+```
+Previously there were no rules regarding whether compilers are allowed to optimize away loops which never terminate and do not affect output by themselves.
+C11 says compilers may optimize away loops if the do not access atomic or `volatile` objects, perform I/O, or have a constant nonzero termination condition, e.g. while(1) {} must stay.
+
+
+## Writing portable C code (Level 3)
+Portable = source code should be able to compile and run correctly on any computer.
+
++ Avoid undefined behaviour.
++ Write code with implemenatation-defined or unspecified behaviour only when doing so cannot affect the obeservable behaviour of your program.
++ Avoid platform-specific system calls - stick to the standard C library if possible.
++ Do not exceed minimum compiler limits, eg number of parameters etc. (This is mostly machine-generated C).
++ Appendix J of the C standard has information on portability issues. Most of them are concerned with standard C library.
+
+### Examples of unspecificed behaviour 
++ Wheter string literals share memory.
++ The order in which operands of eg add are evaluated.
++ Wheter `f()` or `g()` is called first in: `fun(f(), g());`
++ Wheter `errno` is a macro or identifier with external linkage.
++ The order in which `#` and `##` are evalutaed during macro expansion.
++ Which of two elements which compare equal is matched by `bsearch`.
++ The order of two elements which compare equal when sorted by `qsort`. 
++ The resulting value at an overflow when converting a floating-point value to an integer.
++ Wheter the conversion of non-integer floating point value to an integer raise the "inexact" exception.
++ The order of side-effects dring initialization, eg it is not specified whether `f()` or `g()` will be called first below.
+```c
+int main() 
+{
+    int a[] = {f(), g()};
+}
+```
+
+### Examples of undefined behaviour
++ A "shall" or "shall not" requirement which appears outside a constraint is violated.
++ A filed in a comment `/* comment.`
++ An identifer is first declared as extern and later as static.
++ An invaliud pointer is used:
+```c
+int* fun()
+{
+    int a;
+    return &a; // This pointer must not be used.
+}
+```
++ Conversion to or from an integer which cannot be represented (also for conversion from floating-point to an unsigned).
++ When a program attempts to modify a string literal:
+```c
+char* s = "hello, world";
+s[0] = 'H'; // may crash.
+```
++ When an object is modified multiple time between two seqeunce points.
+```c
+i = ++i + i++;
+```
++ `/` or `%` with second operand being zero.
+
+### Examples of Implementation-Defined behaviour
++ The number of bits in a `char`.
++ Whether a `char` is signed or unsigned.
++ How integer numbers are represented: not necessarilty two's complement. (but most of the world assumes that so you should too)
++ Where to serach for `#include <header.h>` files. In UNIX, use the switch `-Idir` to look in the directory `dir`.
++ Endianness. Check on which format the data is stored when reading binary data using `fread`.
