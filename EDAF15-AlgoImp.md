@@ -1089,3 +1089,503 @@ The two parameters to signal are `signum` and `func`.
 The `*` before signal is there due to the return value is a pointer (to a function).
 Since the same function can be signal handler for different signals, the `int` paramter of the signal handler specifies which signal occurred.
 
+When an event happens which triggers a signal, the OS blocks addtional instances of the same signal to avoid having the signal handler being invoked multiple times for the same signal.
+This block is removed when the signal handler returns to OS.
+After that, the OS will let program resume execution.
+What happens if the singal handler instead of returning makes a `longjmp`?
+Ths signal will remain block sine the OS still htinsk the signal handler has not returned.
+
+
+### `strtol` and `strtok` (`<string.h>`) (Level 3)
+To convert a number iun string to an integer the function `strtol` is useful.
+It takes three parameters:
++ A pointer to a string: `char* s`
++ An optional pointer to a pointer to a string: `char** end` 
++ The base, 2-36 or zeor and the the base if inferred from the string.
+
+The function sets `*end` to point to the first character after number - unless `end` is a null pointer.
+For example:
+```c
+int a;
+char* end;
+
+a = strtol("119", &end, 2);
+```
+`a` is set to 3 and `end` to point to the 9.
+
+
+To split a stirng into parts, called tokens, the function `strtok` can be used.
+It is used in two phases:
+1. First two parameters are provided:
+```c
+char* s;
+char a[] = "a string. hi: there";
+char* sep = " :." // NOTE whitespace.
+
+s = strtok(a, sep);
+```
+    + The first parameter **must be modifiable**.
+    + The second parameter contains a set of characters which are used to separate tokens.
+2. If the previous parameter is `null`, search continuse in the previously used string.
+
+Example:
+```c
+char* s;
+char a[] = "a string. hi: there";
+char* sep = " :." // NOTE whitespace.
+
+s = strtok(a, sep);
+while(s != NULL) {
+    printf("%s", s);
+    s = strtok(NULL, sep);
+}
+```
+The output will be `a string hi there`
+The returned string assigned to `s` is null-terminated!
+That means strtok modifies the frist non-null parameter which therfore must be modifiable.
+Using `char* s = "hello there"`; may result in a read only string!
+
+
+### Sorting array of `int` using `qsort` (Level 4)
++ An array (aka pointer to the first element)
++ number of elements
++ size of each element
++ a comparison fnction
+```c
+int compare (const void* ap, const void* bp)
+{
+    const int* a = ap;
+    const int* b = bp;
+    // return *a - *b;
+    if (*a > *b)
+        return 1;
+    else if(*a < *b)
+        return -1;
+    else
+        return 0;
+}
+```
+
+## Buffer overflows (Level 3)
+A buffer overflow means array index out-of-boiund errors.
+Checking that an array index is within the array bounds is not in C, as it is in Java.
+The checking is only usefor programs with bugs.
+To avoid such error, the following simple rule is sufficient:
+**DON'T TRUST UNTRUSTED DATA.** 
+In other words, make a sanity check for all input, and use range checking library functions.
+When there is a risk for overflow: check it explicitly.
+For C: make the calculation (how depends on the type).
+Java does also not report errors on overflow (and connot check it for floting point values).
+
+### An example `sprintf` and `snprintf`
+Both function behave as printf bt put their output in a buffer pointed to by the first parameter.
+The output is null terminated.
+`sprintf` assumes the buffer is sufficiently large.
+The second parameter of `snprintf` specifies the buffer size.
+
+### `gets`
+There is **very** dangerous function called `gets`.
+The fuction `gets` reads the next line of input from `stdin` and copies it to a buffer supplied to `gets`.
+No length checking is done. Don't use `gets`. It may even disappear from C.
+Instead use `fgets` which takes a buffer, a size, and a `FILE*` as parameters.
+
+### `strcpy` and `strncpy`
+`strcpy` copies the stirng pointed to by the second aparameter into memroy pointed to by first parameter upto and including the null byte.
+`strncpy` does the same but copies at most _n_ bytes.
+**Warning**: strncpy may skip the null byte!
+Similar situation for `strcat` which appends a string.
+Use `strncat` instead.
+
+### Compiler protection against buffer overflow.
+Buffer overflows for stack allocated arrays can often be detected by letting the compiler put "canaries" with special value after such arrays.
+If the value of the canary has changed, it ios likely due to a buffer overflow (or some other write throguh an invalid pointer).
+This was supported by GCC some years ago.
+LLVM/CLANG has suupport for a toll called AddressSanitier which behaves like Valgrind but is better integrated with GDB.
+
+
+## Writing Correct C Code and then writing Fast and Correct C Code (Level 3)
+**After** correctness and maintainability, speed and/or code size are usually very important qualities for C code.
+Correctness is the most important, don't optimize anything before you have a correct program.
+**Measure first, then improve!**
+The reference implemenation should follow the specification for your code in a obvious correct way - almost not matter how slow - within practical constraints of course.
+
+
+### Making the reference implementation
+While the reference implementation almost always should be written in the same language as the final implemnatation, it might be a good idea to use an existing tool or language with available libraries which already (or almost) solve the problem (but not suffciently fast).
+Therefore: use whatever tool or langauge you think is easiest to make a first correct ve rsion with.
+For instance, C++, Java, Mathmatica, Matlab, Maple, Scala, or something else might be easiest to use.
+Of course, if you are extending an existing program you probably need to use the smae language though.
+Keep a copy of the reference implemenation for testing. It's invaluable.
+Then, if you didn't already use C as implementation language, do that.
+Thus, when you have a simple-to-undersatynd and correct reference implementation, you to write a fast version in C.
+
+### Uses of the reference implementation
+Testing invlives validating your fast versions against the reference implementation.
+It may also include proving there are bugs in any other versions made by otheres - that is, if there are other verions and if your and their fast versions do not produce the same output.
+For example, if you want to write a clock-cycle true simulator of a complex superscalar microprocessor, having a simple simulator which does not mode any pipline or cahche memory will be invalualbe to valide the complex mode - or finding the first instruction with the wrong result.
+
+### Writing Correct and fast C Code.
++ Maintain correctness using the reference implementation.
++ Writing fast version what we call **implementation tuning**. Which we define as the following:
+
+**Implementation tuning** is the manual application of code transformation techniques which current state-of-the-art optimizing compilers are **not** capable of doing automatically.
+
+### Algorithm for improving the performance of C/C++ program.
+1. If performance is good enough then go on a vacation.
+2. Profile your program using different tools.
+3. Figure out how you can improve the most time consuming part.
+    + Should you use a different optimizing compiler or other optimization flags?
+    + Should you use a different algorithm and/or data structure?
+    + Can you exploit something in the input to **make the common case faster?**
+    + Can you precompute or cache values?
+    + Is it possible to use mathematics to simplify the program?
+    + Can you use counters to collect statistics about the behaviour of your program - if the profiler do not give suffcient insights?
+    + How can you exploit the behaviour you have detected?
+4. Implement your ideas and make measurements to verify that your ideas are correct.
+5. Valdiate your program on all test cases.
+6. Go to 1.
+
+### Profiling tools (Level 3)
++ operf - Samples the program counter and hardware counters.
++ gprof - also samples the program counter and analyses the call graph.
++ gcov  - counts the number of times each line executed
+
+Don't forget `printf("counter X = %llu\n", X);`A
+Simple counters can give a lot of insights - it's usually a good idea to use `unsigned long long` for counters - otherwise you might print nonsence, if the counter overflows.
+Or better: `typedef unsigned long long count_t`
+
+#### Performance monitor counters (operf)
+Special registers in the CPU.
+For instance four such registers
+They can be programmed to count events
+Some of the 960 events that can be counted from POWER8, some are:
++ PM_DATA_FROM_MEM
++ PM_L1_ICACHE_MISS
++ PM_RUN_INST_CMPL
++ PM_TM_TBEGIN
++ PM_CYC (clock cycles)
+
+After a selected number of events have occurred, an exception is triggerd in the CPU.
+This changes the CPU state to supervisor mode, savers PC, and jumps to the operating system kernel.
+The kernel collects the statistics (event type and PC) and returns to user mode and resumes the program.
+
+#### operf on Linux.
+Measure a program such as user:
+`operf -e CYCLES:100000:0:0:1 <program_name>`
+The frist number specifies how many events to count before triggering an exception.
+The next is a mask, the third specifies wheter kernel space should be monitored, and the fourth wheter user space souhld be monitored.
+The statistics are saved in the directory `oprofile_data`.
+
+#### intopt comiled with optimization
+`opreport -t 0.7 -l` will print all function in which at least 0.7% of the cycles where sampled.
+
+The essential parts of the output are:
+`CPU:ppc64 POWER8, speed 3491MHxz (estimated)`
+|Counted samples|CYCLES (%)|events (Cycles) symbol name|
+|---------------|----------|---------------------------|
+|36404          | 87.3207  | pivot                     |
+|2544           | 6.1022   | xsimplex                  |
+|844            | 2.0245   | select_nonbasic           |
+|673            | 1.6143   | xinitial                  |
+|368            | 0.8827   | extend                    |
+
+Why is this run without optimization?
+This is a trade-off between the quality of insights, and the actual optimized program.
+
+Redoing the same measurement with `-O3` option to `gcc`, we instead get:
+|Counted samples|CYCLES (%)|program      | events (Cycles) symbol name|
+|---------------|----------|--------     |-------------------         |
+|12079          | 86.3279  |intopt       |pivot                       |
+|1216           | 8.6907   |intopt       |xinitial                    |
+|242            | 1.7296   |intopt       |xsimplex.constprop.0        |
+|145            | 1.0363   |libc-2.27.so |_int_malloc                 |
+As we can see, xsimplex, has been cloned adn specialized with constant propagation.
+The goal is to find the most time-consuming function, which in both cases is `pivot`.
+
+#### `opannotate -s`
+To see which source line in `pivot` gets the most samples, we can use
+`opannotate -s`
+which prints the source code file and the number of samples take for each line.
+With optimization, the line number information is no longer accurate and therfore we show the output from the unoptimized run.
+Most smaples were taken in the following loop:
+```c
+for (i = 0; i < m; i++){
+    if(i == row)
+        continue;
+    for(j = 0; j < n; j++)
+        if(j != col)  
+            a[i][j] = a[i][j] - a[i][col] * a[row][j] / a[row][col]; // 66.8458% 
+}
+```
+
+### gprof
++ Source code must be compiled with `-pg`
++ Run the program first.
++ Then use `gprof -T <program_name>`
+Which procudes the output:
+
+| %  | cumulative seconds | self seconds | calls | self ms/call  | total ms/call | name               |
+|--- |--------------------|------------- |--------|------------- |-------------- | --------           |
+|88.3| 1.05               | 1.05         | 148711 | 0.01         | 0.01          | pivot              |
+|5.9 | 1.12               | 0.07         | 7038   | 0.01         | 0.16          | xsimplex           |
+|2.5 | 1.15               | 0.03         | 148796 | 0.00         | 0.000         | select_nonbasic    |
+
+`gprof` also produces a call-graph, i.e. which function that calls which.
+
+### gcov
+`gcov` gives output on how many times each source code line is executed.
+1. Compile with `-fprofile-arcs` and `-ftest-coverage`.
+2. Run the program
+3. Then use `gcov simplex.c`
+This produces `simplex.c.gcov` which specifies which how many times each line is run.
+This is best used with an unoptimized program.
+
+#### Branch statistics
+`gcov -b intopt.c` and the same steps as above.
+Gives output specifying which branch (e.g. `if` statements) the program took during execution.
+
+
+## Make the common case fast (Level 3)
+The code below tests for the most unlikely condition first!
+How can we improve the loop?
+```c
+int c;
+while((c = getchar()) != EOF)
+    if(c == '\n')
+        X;
+    else if (c == ' ')
+        Y;
+    else 
+        Z;
+```
+Test for the most likely path first!
+```c
+int c;
+for(;;) {
+    c = getchar();
+    if (c > ' ')
+        Z;
+    else if (c == ' ')
+        Y;
+    else if (c == '\n')
+        X;
+    else if (c == EOF) 
+        break;
+    else
+        Z;
+}
+```
+
+If we assume Z is so large we don't to duplicate it!
+```c
+int c;
+for(;;) {
+    c = getchar();
+    if (c > ' ')
+L:      Z;
+    else if (c == ' ')
+        Y;
+    else if (c == '\n')
+        X;
+    else if (c == EOF) 
+        break;
+    else
+        goto L;
+}
+```
+Not very pretty, but might be worth it!
+
+### Cachegrind
+Another profiling tool is cachegrind. Which measures the cache hit and miss ratios.
+Run it with `valgrind --tool=cachegrind ./a.out`
+
+### Using Simulators 
+Profilers do not always provide "perfect" information.
+For instance, Cachegrind gives cache miss rates but does not tell you why there were misses.
+Some simulators can see which variables map to the same place in the cache and tell you that.
+Then you probably can fix that by moving one of the variables.
+Simulators are of course much slower than real machines.
+However, since they can count clock cycles exactly (or at least instructions) you fothe don't have to run your benchmark for so long.
+
+An example:
+Suppose you have a short function and you want to understand exactly what happens in it.
+Instead of smapling the PC during 20 seconds or five minutes, you can run the simulator once and it almost directly can tell you the function takes 44 clock cycles to execute.
+More importantly, it can visualize what happens in the pipline so you understand exactly why it takes 44 cycles.
+Therefore simulators actually can be quicker - but usually they are not.
+
+# Intro to Optimizing Compilers (Level 4)
+Motivation for using optimizing compilers:
++ Execution time / energy reduction: possible speedups due to compiler optimization depend on the application and the architecture (e.g. pipline, SIMD, caches, multicore)
++ Increase programmer productivity by knowing
+    - What the compiler can optimize faster and better than himself and,
+    - compilers' limitations and how to write code that helps them to do better automatic optimization.
+
+### Control-Flow graph
+Example C code:
+```c
+a = u + v;
+if (a > b) {
+    y = u;
+} else {
+    a = u - v;
+    b = a - 1;
+}
+y = a * b;
+```
+#### Basic Blocks and Branches
+Basic block : sequence of instruction with no label or branch.
+CFG: directed graph with basic blocks as nodes and branches as edges.
+
+Two special nodes are added:
++ The first node *s* - start.
++ The last node *e* - exit.
+
+### Definition of Dominance
+Consider a CFG _G(V, E, s, e)_ and two vertices _u, v ϵ V_.
+If every path from _s_ to _v_ includes _u_ then _u_ **dominates** _v_, written _u >> v_.
+In a CFG _s_ dominates every other nodes, and _e_ dominates none.
+
+The set _dom(w)_ is a total order. I.e. we can compare two nodes.
+In other words: if _u, v ϵ dom(w)_. then either _u << v_ or _v >> u_.
+We can order all vertices in _dom(w)_ to find the "closest" dominator of _w_.
+First _let S ← dom(w) - {w}_.
+Consider any two vertices in _S_.
+Remove from _S_ the one which dominates the other. Repeat.
+The only remaingin vertex in _S_ is the **immediate dominator of _w_**.
+We write the immediate dominator _w_ as _idom(w)_.
+Every vertex, except _s_, has a unique immediate dominator.
+We can draw the immediate dominators in a tree called the **dominator tree.**
+
+#### The Dominator Tree
+The dominator tree is the most important data structure in an optimzizing compiler.
+| _w_ | _idom(w)_ |
+| --- | --------- |
+| 0   |   -       |
+| 1   |   0       |
+| 2   |   1       |
+| 3   |   1       |
+| 4   |   3       |
+| 5   |   1       |
+| 6   |   2       |
+| 7   |   6       |
+
+
+### The Lengauer-Tarjan Algorithm
+The LT algorithm is the standard algorithm for computing the dominator tree.
+The LT algorimth calculates the immeidate dominators in a clever way and is based on insights from depth first search.
+
+
+### Loop analysis using Dominance
+With the help of dominance we can find loops (**natural loops**).
+Loops can be found by exploiting cycle arcs.
+In a **natural loop**, one vertex called the _header_ dominates all vertices in the loop.
+Suppose there is a cycle arc _(v, u)_ such as (3,1) above.
+Then if _u >> v_ we know that _u_ is a natural loop header.
+We can search backwards from _v_ and include everything we find to the loop, stopping at _u_.
+Due to _u >> v_ we cannot go wrong and miss _u_.
+
+
+## Static Single Assignment For Form: SSA Form (Level 4)
+A variable is only assigned to by one unique instruction.
+That instruction dominates all the uses of the assigned value.
+We introduce a new variable name at each assignment. 
+SSA Form is the key to elegant and efficient scalar optimization algorithms.
+** But what to do when paths from different assignments join???**
+
+If we came from a node _x_ we let a2 ← a0 and if we came from node _y_ a2 ← a1. This operation is called the ̉_phi-function_.
+We insert the _phi-function_ where the paths from two different assignments of the same variable join. With the _phi-function_, each definition dominates its uses.
+
+
+### Copy Propagation
+Consider the two following programs, first has been converted to SSA Form.
+```c
+x0 = a0 + b0;
+if (...) {
+    ...;
+}
+y0 = x0; /* COPY */
+if (...) {
+    ...;
+}
+c0 = y0 + 1; /* USE */
+```
+
+```c
+x0 = a0 + b0;
+if (...) {
+    ...;
+}
+if (...) {
+    ...;
+}
+c0 = x0 + 1; 
+```
++ With SSA Form we can know that it is correct to replace `y0` with `x0`.
++ The values of x0 and y0 do not change after definition (in a static sense).
++ That is to say since `x` and `y` has not changed its index it is safe to remove the copy statement.
+
+
+### Constant Propagation with Iterative Dataflow Analysis
+```c
+a = 1;
+b = 2;
+if (a < b)
+    c = 3;
+else 
+    c = 4;
+put(c);
+```
+Each variable can be either
++ Unkown 
++ Constant
++ Non-constant
+Iterative dataflow analysis is performed to determine whether a variable is constant and in that case which constant.
+All branches (i.e. paths in a function) are assumed to be executable.
+Since `c` cannot be both 3 and 4 it's assumed to be non-constant.
+
+
+### Constant Propagation with Conditional Branches
+```c
+a = 1;
+b = 2;
+if (a < b)
+    c1 = 3;
+else 
+    c2 = 4
+c3 = phi(c1, c2);
+put(c3);
+```
++ Based on SSA Form.
++ Recall Kildall's algorithm assumed every branch was executable.
+    - This algorithm assumes nothing is executable except the start vertex.
++ The function is interpreted and the constant expressions are propagated.
++ The interpretation processed until no new knowledge about constants can be found.
+
+#### Key idea with _phi-functions_
++ Thanks to SSA Form, one statement and variable is analyzed at a time.
++ At a _phi-function_, if any operand is non-constant the result is non-constant, and if any two constants have different values the result is non-constant.
++ However, operands corresponing to branches which we don't think will be executed can be ignored for the moment.
++ While interpreting the program we may later realize that the branch in fact might be executed and then the _phi-function_ might be executed and then the _phi-function_ will be revaluated. 
++ We can ignore c2 and let c3 be 3.
+
+#### Value numbering
+The name is due to each expression, e.g. _ti ← a + b_, is given a number, essentially a hash-table index.
+In subsequent occurrences _tj ← a + b_ it is checked whether the statement can be change to _tj ← ti_.
+This is a very old optimization technique with one version that is performed during translation to SSA Form and other versions when the code already is on SSA Form.
+There are obviously older versions used before SSA Form but we will not look at them.
+
+Value numbering is part of a category called **redundany elimation**.
+An expression _a + b_ is **redundant** if it is evaluated multiple times with identical values for the operands.
+Elimination redundant expressions is a very important optmization goal.
+There are differnt approaches to redundany elimination, including:
+1. Hash-Based Value Numbering
+2. Global Value Numbering
+3. Common Subexpression Elimination 
+4. Code Motion out of Loops 
+5. Partial Redundany Elimination. 
+We will look at 1, 2, and 5.
+
+#### The Power of Global Value Numbering
+Below are two functions `h`
+```c
+```
