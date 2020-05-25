@@ -1586,6 +1586,84 @@ There are differnt approaches to redundany elimination, including:
 We will look at 1, 2, and 5.
 
 #### The Power of Global Value Numbering
-Below are two functions `h`
+The idea behind Global Value Numbering is:
++ Assume that e.g. all additions result in the same value.
++ Assumne that until proven otherwise.
++ With this we can know that in the function below the value of `x` and `y` are identical.
+Below are two functions `h`, the first has not applied Global Value Numbering, while the second has.
 ```c
+int h(int a, int b) {
+    int x, y;
+    x = 1;
+    y = 1;
+
+    do {
+        a = a + b;
+        x = x + a;
+        y = y + a;
+    } while(a > 0);
+    
+    return x + y;
+}
 ```
+```c
+int h(int a, int b) {
+    int x, y;
+    x = 1;
+    do {
+        a = a + b;
+        x = x + a;
+    } while(a > 0);
+    
+    return x + x;
+}
+```
+
+### Partial Redundany Elimination
+Partial Redundany Elimination, or **RPE**, can eliminate both **full** and **partial** redundancies.
++ Full redundancies : when the expression is available from all predecessor basic blocks.
++ Partial redundancies : when the expression is only available from some but not all predecessor basic blocks.
+    - Partial redundancies also covers loops, i.e. PRE can move code out from loops.
+
+#### The Key Idea of SSAPRE
++ We create _**phi**-functions_ for the hypothetical variable _h_.
++ After SSAPRE _**phi**-functions_ becomore normal _phi-functions_ and they are really the same. (different notation to distinguish between them only)rmal _phi-functions_ and they are really the same (different notation to distinguish between them only).
++ By inserting the expression _a + b_ at _**phi**-operands_ with the value | ("bottom"), the partial reduncany in vertex 3 becmodes a full reduncany and can be eliminated.
+
+### Operator Strength Reduction (Level 4)
+The most important purpose is to rewrite the code above into the code below. (Convert an expensive operation i.e. `*` to a cheaper one `+`)
+C/C++ compilers are required to make it possible to use the addres of the array element after the last declared element.
+Typically, in total one extra byte might be wasted in memory due to this.
+It's **not** one extra byte per array but rather per memory segment.
+```c
+double a[N];
+for (i = 0; i < N; ++i)
+    x += a[i];
+```
+```c
+double a[N];
+double* p = a;
+double* end = &a[N];
+while(p < end){
+    x += *p++;
+}
+```
+Another name fror OSR is Induction Variable Elimination.
+The following code snippets are equivalent.
+```c
+do {
+    x = x + a[i];
+    i = i + 1;
+} while(i < N);
+```
+
+```c
+do {
+    s = i * 4;
+    t = load a+s;
+    x = x + t;
+    i = i + 1;
+} while(i < N);
+```
+
+
