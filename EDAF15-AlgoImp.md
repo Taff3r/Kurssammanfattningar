@@ -737,3 +737,355 @@ i = ++i + i++;
 + How integer numbers are represented: not necessarilty two's complement. (but most of the world assumes that so you should too)
 + Where to serach for `#include <header.h>` files. In UNIX, use the switch `-Idir` to look in the directory `dir`.
 + Endianness. Check on which format the data is stored when reading binary data using `fread`.
+
+## Inline functions (Level 5)
+Inline functions is an alternative to using preprocessor macros.
+Inlining a function means copying the statements of a function into the calling functions instead of doing the call.
+This can be done automatically by good compilers and should *NOT* be done by programmers (in Skeppstedt's opinion).
+With C99 the keyword inline was introduced to C which can be used to give the compiler a _hint_ that it might be a good idea to inline a function.
+Since good compilers can inline parts of a function automatically - and even copy rarely used parts of a funtction to some other place in memory iti is much much better to let the compiler take care of this.
+Use `inline` only if you use a poor compiler.
+
+
+### Linkage and inline functions
+Recall: external linkage means an identifier is accessible from other files.
+A funcion with internal linkage, i.e. declared with `static` can always be inlined but function with external linkage have restrictions:
++ An inline function with external linkage may not define modifiable data with static storage duration.
++ An inline function with external linkage may not reference any identifier with internal linkage.
+
+What do these mean and why do we need these restrictions?
+
+First restriction:
+```c
+extern inline int f(void)
+{
+    static int x;
+    static const int a[] = {1, 2, 3};
+    return ++x;
+}
+```
+Restriction: an inline function with external linkage is not allowed to declare modifiable data with static storage duration.
+Since copties of `f` inlined in different files will use different instances of `x` is forbidden.
+The constant array is OK.
+
+Second restriction:
+
+```c
+static in g(void)
+{
+    return 1;
+}
+
+extern inline int f(void)
+{
+    return g();
+}
+```
+Restriction: an inline function with external linkage is not allowed to access and identifier with internal linkage.
+When `f` is inlined in some file, it will use the available function `g` but then different files can have different functions `g`.
+
+#### A warning
+The `gcc` compiler supported in `inline` function specifier before it was added to the C standard.
+Unfortunately, `gcc` uses slightly non-standard semantics for `inline`.
+A simple rule which works both in ISO C and with gcc is to declare inline functions in header files such as:
+```c
+#ifndef max_h
+#define max_h
+
+static inline int max (int a, int b)
+{
+    return a >= b ? a : b;
+}
+
+#endif
+```
+
+## The C Library (Level 3 and 5 respecitvly)
+There are 24 header files in C99 and 29 in C11.
+Here are some of the more important header files.
+
+### <assert.h>
+To check that your assumptions hold during execution, you can do as follows:
+```c
+#include <assert.h>
+void insert_first(list_t** list, void* data)
+{
+    (assert *list != NULL);
+    /* ... */
+}
+```
+It is useful uring development and can used for consistency checks.
+Compiling `cc -DNDEBUG` will disable the test.
+Therefore don't do:
+`assert((fp = fopen(name, "r")) != NULL);`
+
+If `NDEBUG` is not defined, the expression is evaluated, and if it nonzero, nothing happens.
+If the expression is false, an error message is pringed and the `abort` function is called.
+Suppose you want to check that a pointer is 8 bytes:
+```c
+assert(sizeof(void*) == 8);
+```
+How can you check that duing compilation?
+
+*DON'T* do this:
+```c
+#if sizeof(void*) != 8
+#error the program assusmes a pointer is 8 bytes.
+#endif
+```
+Why?
+The preprocessor does not regonize the reserved word `sizeof`.A
+
+Instead use static assertion.
+
+C11 has a new construct for it called `_Static_assert`, but we can easily deine a macro.
+The idea is:
+```c
+int array[sizeof(void*) == 8 ? 1: -1];
+```
+
+If the expression is false, we would declare an array with -1 elements which the compiler must complain about.
+To avoid:
++ Actually declaring an array and waste memeory,
++ having to invent a different array name every time
+We declare an array typedef (wastes no memory) and uses token concatenation (`##`) to make the line number part of the name.
+Like this:
+```c
+#define PASTE(a,b)  a##b
+#define EXPAND(a,b) PASTE(a,b)
+#define STATIC_ASSERT(expr) typedef char EXPAND \
+        (failed_static_assertion_in_lin, __LINE__) \
+        [(expr) ? 1 : -1]
+// When compiled on 64 bit machine:
+STATIC_ASSERT(sizeof(int) == sizeof(void*)); // => a.c:7: error: size of array 'failed_static_assertion_in_line7' is negative.
+```
+
+### `<ctype.h>` (Level 3)
+<ctype.h> contains classification functions such as `isdigit`.
+The take an int parameter and returna nonzero value to indicate truth.
+It is wrong to write:
+```c
+if (isdigit(c) == 1)
+    /* ... */
+Since the return value equally well could be 2 if `c` is a digit.
+```
+
+### `errno` / Exceptions (Level 3)
+There are exceptions in C, but are not like the ones in Java.
+Here they describe low-level exceptions that are related to floating-point arithmetic.
+`<fenv.h>` defines macros for exceptions:
++ `FE_DIVBYZERO`
++ `FE_INEXACT`
++ `FE_INVALID`
++ `FE_OVERFLOW`
++ `FE_UNDERFLOW`
++ `FE_DOWNWARD`
++ `FE_TONEAREST`
++ `FE_TOWARDZERO`
++ `FE_UPWARD`
+
+The exceptions can be set both by hardware and software.
+When a math function detects an invalid input argument it should set the `FE_INVALID` bit in the processor's floating point status register.
+There are function for fetching a copy of the floating point status register.
+There are functions for fetching a copy of the floating point status register and for testing and cleraing bits, and other ooperations.
+
+C has traditionally stored arror codes in variable called `errno`.
+The are three standard errors:
++ `EDOM`
++ `ERANGE`
++ `EILSEQ`
+
+The first two refer to math errors: an argument was not in the domain of the function and the return value could not represent in the range of the return type.
+The `EILSEQ` us used with an invalid multibyte character sequence.
+Operating sysytems define others such as:
++ `ENONENT` for "No such file or directory".
++ `EPERM` for "Permission denied".
+
+### Using `errno`
+We should set `errno` to zero before any call which might fail such as opening or removing a file and some math functions.
+For example:
+```c
+#include <errno.h>
+#include <stdio.h>
+int main(void)
+{
+    errno = 0;
+    if(remove("/") == -1)
+        perror("cannot remove \"/\"");
+}
+```
+
+`errno` behaves as if it was declared a global variable `int errno;`.
+For multithreaded prorams this doesn't work very well - due to data-races.
+Each thread gets its own copy of `errno` and this is typically implemented as:
+```c
+int* __get_errno_for_current_thread(void)
+{
+    return &current_thread->errno;
+}
+
+#define errno(*__get_errno_for_current_thread())
+```
+
+Then we can use it as:
+```c
+errno = 0;
+/* .. */
+```
+
+With C11 we can instead delcare `errno` using:
+__Thread_local int errno;
+This way each thread gets its own copy of `errno`.
+
+`errno` is intended for use by system libraries such as the API's for performing system calls and Pthread libraries.
+System calls are special function calls provided by the operating system which means Windows has one set of system calls and UNIX,
+including MacOS X, Linux, and AIX, have other sets.
+To report erros form your own libraries, it is often a good idea to define an enum with different error codes.
+
+
+#### `<math.h>`
+Compile with -lm at the end of the command: `gcc a.c -lm`
+Traditionally errno is used but C99 allows math exception to be tested in a different way.
+We ned to check which way the library report math erros using `math_errhandling`.
+```c
+errno = 0;
+sqrt(-1);
+if (math_errhandling & MATH_ERRNO)
+    /* ... */
+if (math_errhandling & MATH_ERREXCEPT)
+    /* ... */
+```
+
+Math erros reported with `errno`:
+```
+if (math_errhandling & MATH_ERRNO)
+    if (errno == EDOM)
+        puts("EDOM");
+```
+
+Math errors reported as exceptions:
+```c
+if (math_errhandling & MATH_ERREXCEPT)
+    except = fetestexcept(FE_ALL_EXCEPT);
+    if (except & FE_INVALID)
+        puts("FE_INVALID");
+```
+
+### `<inttypes.h> and <stdint.h>` (Level 3)
+`<inttypes.h>` declares macros which are string that can be used.
+For example:
+```c
+#include <inttypes.h>
+int32_t a;
+printf("a = %" PRId32 " \n", a);
+```
+
+`<inttypes.h>` includes `<stdint.h>`.
+Strictly speaking this also not portable isnce it is implemenatation define whetere there is an int32_t but if there is, this how to print it.
+For instance a DSP-processor with 24-bit int may not have `int32_t`.
+
+
+### `<setjmp.h>` (Level 4)
+To jump to a label `L` we use `goto L;`
+In C we can also jump fron one function to another.
+Consider:
+```c
+void g(void) { /* ... */ }
+void f(void) { g(); }
+
+int main(void) 
+{
+    /* ... */
+    f();
+}
+```
+Usually `g` retruns to `f` which returns to `main`.
+If we wish we can return from `g` directly to `main`.
+Instead of `return` we use `longjmp`.
+`longjmp` has an ever worse reputation than `goto` but can be useful.
+
+#### What is the context of an executing thread?
++ Program counter (PC)
++ Registers
++ To make a jump to a function _f_, that function must already have an allocated stack frame and its program counter and register must have been saved.
++ Thus e.g. `main` cannot jump into the middle of any function - a call to the jumped-to function must already be active ush as the call to _f_ above.
++ There is type jmp_buf in which the PC and registers are saved.
++ A jump preformed by loading all registers and finaly the PC form such `jmp_buf` variable.
+
+Typical usage of `longmjp`:
+```c
+#include <setjmp.h>
+jmp_buf buf;
+
+int main(void) 
+{
+    switch(setjmp(buf)){
+    case 0: /* initialization. */ break;
+    case 1: /* from longjmp */ break;
+    }
+
+    /* ... */
+    g();
+}
+
+void g(void)
+{
+    /* ... */
+    if (must_stop())
+        longjmp(buf, 1);
+}
+```
+Remarks about long jumps:
++ Almost always non-local jumps are not needed.
++ In a chess program which has found a winning move it can be appropriate to terminate a deep recursive search using `longjmp`.
++ Functions with non-local jumps are **very** annothing to optimizing compilers and often result in slower code.
+
+### `<signal.h>`
+A signal is a way of notifying a running program that something has happend (usually something bad).
+
+C standard signals:
+| Signal | Example cause           | Default Effect        |
+| ------ | ----------------------- | --------------------- |
+| SIGABRT| `abort()`               | Terminate the process |
+| SIGFPE | implemation defined     | Terminate the process |
+| SIGILL | illegal instructuion    | Terminate the process |
+| SIGABRT| `abort()`               | Terminate the process |
+| SIGINT | CTRL+C                  | Terminate the process |
+| SIGSEGV| invalid address         | Terminate the process |
+| SIGTERM| kill <pid>              | Terminate the process |
+
+UNIX-specifc singals:
+| Signal | Example cause                  | Default Effect        |
+| ------ | ------------------------------ | --------------------- |
+| SIGSTOP| CTRL+Z                         | Stop the process      |
+| SIGSTOP| kill -SIGTOP <pid>             | Stop the process      |
+| SIGCONT| kill -SIGCONT <pid>            | Resume the process    |
+| SIGBUS | eg non-aligned memory access   | Terminate the process |
+| SIGKILL| kill -SIGKILL <pid>            | Terminate the process |
+| SIGKILL| kill -9 <pid>                  | Terminate the process |
+
+
+Common use:
+To get informed about a signal, sent from the OS, we must register a so called signal handler.
+A signal handler is simply a function that the operating system runs for us.
+If we have not regsitered a signal handler before a signal is received our program is usually reminated, i.e. that is the default action.
+To register a signal handler `catch_ctrl_c` for SIGINT we can do:
+```c
+#include <signal.h>
+void catch_ctrl_c(int s) { /*... */ }
+int main(void)
+{
+    signal(SIGINT, catch_ctrl_c) ; for(;;);
+}
+```
+
+The signal function tells the OS which function to call instead of terminating our program.
+The function `signal` returns the previously registerd function for a particular signal number.
+The declaration of the `signal` is perhaps confusing to read:
+```c
+void (*signal(int signum, void(*func)(int)))(int);
+```
+The two parameters to signal are `signum` and `func`.
+The `*` before signal is there due to the return value is a pointer (to a function).
+Since the same function can be signal handler for different signals, the `int` paramter of the signal handler specifies which signal occurred.
+
