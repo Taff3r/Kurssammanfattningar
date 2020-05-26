@@ -1666,4 +1666,225 @@ do {
 } while(i < N);
 ```
 
+The primary goal is to get rid of the multiplication.
++ `i` above is a _basic_ induction variable. (IV)
++ Classes of _dependent_ induction variables: *j ← b * i + c*, _i_ is a basic IV
++ _i ← 4 * i + 0_
+
+#### Strength reduction
++ Initalize the dependent IV before the loop
++ Increment the dependent IV just after basic IV is incremented
++ Maybe we can get rid if basic IV now?
+
+E.g. this block...
+```c
+do {
+    s = i * 4;
+    t = load a+s;
+    x = x + t;
+    i = i + 1;
+} while(i < N);
+```
+Becomes this block:
+```c
+s = 4 * i;
+do {
+    t = load a+s;
+    x = x + t;
+    i = i + 1;
+    s = s + 4;
+} while(i < N);
+```
+Now the only purpose of `i` becomes keeping track of when to leave the loop, but that could just as well have been done with `s`.
+```c
+m = 4 * N; // New loop max
+s = 4 * i; // Loop variable and index.
+do {
+    t = load a+s;
+    x = x + t;
+    s = s + 4;
+} while(s < m);
+```
++ _s = i * b + c_ (we have _b_ = 4 and _c_ = 0)
++ _i = (s-c) / b_
++ _i < N => (s-c) / b < N => s < N * b + c, if b > 0_
+
+
+### Two Simple Forms of Dead Code elimination
+```c
+#include <stdio.h>
+int main(void)
+{
+    int a;
+    a = 1;
+    a = a + 2;
+
+    goto L;
+    printf("a = %d\n", a);
+
+L:
+    return 0;
+}
+```
+
+In the code above the call to `printf` is dead, and can, and will, never be executed. How could this be removed?
+By doing a graph search (e.g. with DFS) from the start node we can see which nodes (basic blocks) are unavailable to traverse to. Then we see that the call to `printf` is not able to be executed.
+
+Another method is to use Liveness Analysis.
+Liveness Analysis checks whether a value will be used in the future.
+If we consider the code above we can see that the first assignment to `a` is alive, since the value is used in line below it.
+However, the line below it (`a = a + 2;`) is not alive since the `printf` can never be executed.
+So we can then remove all assignements to non-alive variables. 
+We then repeat the process and see that since now the line `a = a + 2;` is removed `a = 1;` is now dead and can be removed aswell.
+
+These methods were used up until 1991, there is nothing inherently wrong with this method, but these methods aren't perfect.
+
+In the following code block:
+```c
+for(i = 0; i < n; ++i)
+    a = a + i * i;
+return;
+```
++ The variable `a` is live in the loop but will not affect the program output.
++ The loop should be deleted but it cannot be using dead code elimination (DCE) based on liveness.
+
+We want our algorithm to be as general and simple as possible, having an additional algorithm that looks through the code for `for`-loops that don't affect the output is not very good. It should be able to handle arbitrary code and still behave correctly using simple analysis and simple transformations.
+
+### DCE based on observable output
++ The correct approach to DCE it to delete all code which cannot affect the observable output.
++ The each function, some instrctuion are makred as *live*, e.g. calls to `printf`, are put in a worklist.
++ The recursively, all instrctuons which provide input to a live instruction is maked as live and put on the worklist.
++ Eventually no new instructions are marked as live and all other instruction can be deleted (but read more about branches first!).
++ Instrutions that are initially makred live include: function calls, memory writes, and return instrctions.
++ Why did it take more than 30 years to invent this obvious approach to DCE? Because there was no need, since people usually don't write dead code, and that the other approaches were sufficient.
++ With SSA Form, however, it's more likely there will be lots of instructions, in particular _phi-functions_, which remain after other optimizations.
++ For example, operator strength reduction explicitly copies and modifies the strongly connect components in the SSA Graph of induction variables, which can leave a lot of work to DCE.
+
+### Control Dependence
++ Assume there is live instruction in vertex _x_.
++ The DCE algorithm must assure execution acctually reaches _x_ exactly as the original program would.
++ Therefore some conditional branch instrcutions (and the instrcution providiing their input etc) which branch to _x_ must also be marked live.
++ In this example the brnach in _u_ constrols whether _x_ certainly will be executed.
++ The vertices that control whether _w_ will be executed are _u, v,_ and _w_ itself.
+
+## Register Allocatation (Level 4)
++ Which variables cannot use the same register?
++ How many registers are needed?
+### Live Variables Analysis
+If we use a more advanced form of DCE that is not based on Live Analysis, we still need to do Live Analysis.
+```c
+int h(int a, int b)
+{
+    int c;
+S1: c = a + b;
+
+S2: if (c < 0)
+        return c * 44;
+S3: a = b - 14;
+
+    return -a;
+}
+```
++ A variable _x_ is *live* at a point _p_ (instruction) if it may be used in the future without being assigned to.
++ `a` is live from the function start and up to and including the addition, and the after `S3` and up to and including the negation.
++ `b` is live from the start and up to and including the subtraction.
++ `c` is live from `S1` and up to and including the multiplication.
+
+### An Example of Graph Coloring
+The traditional register allocation algorithms were "ad-hoc" and stopped working when the number registers got higher.
+The new method was to model the register allocations as a graph coloring problem.
+However, graph coloring is NP-complete problem and has to simplified.
+** JUST WATCH THE VIDEO (F12 : 8) THIS IS CAN'T REALLY BE DESCRIBED WITH TEXT IN A SIMPLE MANNER**
+
+
+
+## Instruction Scheduling (Level 4)
+The purpose of **instruction scheduling** is to improve performance by reductin the number of pipline stalls suffered duing execution. By changing the execution order of the instructions.
+The following example illustrates the concept, wheter the right coloumn is the scheduled code.
+Due to instrctuions only are scheduled withing one basic block, only a limited improvement is achieved - the `fsub` and `stf` are not helped at all.
+
+```
+ldf t2,a,t1           ldf r2,a,t1
+ldf t3,b,t1           ldf t3,b,t1
+fadd t4,t2,t3         ldf t5,c,t1
+ldf t5,c,t1           ldf t6,d,t1
+ldf t6,d,t1           fadd t4,t2,t3
+fmul t7,t5,t6         fmul t7,t5,t6
+fsub t8,t3,t7         fsub t8,t3,t7
+stf t8,e,t1           stf t8,e,t1
+```
+
+Instruction scheduling is usually done before register allocation, then if there is **spill**-code, another instruction scheduling again in those basic blocks which contained spill.
+There is an inherent conflict of interest between register allocation and instruction scheduling. Instruction scheduling wants to increase the distance between producer and consumer, but this increases the **register pressure** for the allocator since there a larger number of live values that needs to be handled.
+
+#### Example of register pressure on Different Schedules
+The left schedule needs three floating point registers and the right schedule one more.
+```
+ldf f2,ra,r1          ldf f2,ra,r1
+ldf f3,rb,ri          ldf f3,rb,ri
+fadd f2,f2,f3         ldf f4,rc,ri
+ldf r3,rc,ri          ldf f5,rd,ri
+ldf f4,rd,ri          fadd f2,f2,f3
+fmul f3,f3,f4         fmul f4,f4,f5
+fsub f2,f2,f3         fsub f2,f2,f4
+stf f2,re,ri          stf f2,re,ri
+```
+This isn't necesseraily bad, especially if the code runs throgh many iterations.
+
+### Modulo Scheduling
+Consider the following loop and assume there are true dependencies from `A` to `B` and from `B` to `C`.
+```c
+vodi h()
+{
+    int i;
+    
+    for(i = 0; i < 100; ++i) {
+        A;
+        B;
+        C;
+    }
+}
+```
+Due to list scheduling only works with one basic block it cannot improve this loop.
+Such loops are of course extremely common.
+
+List scheduled Execution is how we normaly consider execution.
++ Each iteration is completed before the next start.
++ The height of an iteration is the number of clock cycles it takes.
+
+But with Modulo scheduling
++ A new iteration is startyed before the current has completed.
++ We wish to start the next iteration as early as possible.
++ If we start the next iteration the **same** clock cycle, we need a multicore with one core per loop iteration.
+
+* Let us take instruction from the three iterations and interleave them.
+* First we need to execute instructions from the first two iterations in a prologue.
+
+| cycle | i | ii | iii|
+| ---- | -- | -- | -- | 
+|0     | A0 |    |    |
+|1     | B0 | A1 |    |
+|2     | C0 | B1 | A2 |
+|3     | A3 | C1 | B2 |
+|4     | B3 | A4 | C2 |
+|5     | C3 | B4 | A5 |
+|6     | A6 | C4 | B3 |
+|7     | B6 | A7 | C5 |
+|8     | C6 | B7 |    |
+|9     |    | C7 |    |
+
+* Assume for illustratin only 8 iterations are executed.
+* For example A3 denotes instruction A in iteration 3.
+* After a steady-state with 2 * 3 iterations there is an epilogue.
+* Consider instruction B3. Whilte it waits for A3, the CPU can also execute C1 and B2, assuming a pipeling superscalare CPU.
+
+Using Modulo scheduling we can get multiple times the performance compared to using list scheduling, depending on the rest of the program.
+
+### Optimizing for OOP
++ All normal optimizations are applicable to OOP as well.
++ Virtual function calls, i.e. class througha pointer to an unkown method limits optimization oportunities.
++ Therefore, it is important to find calls which must refer to a specific method.
++ Sometimes that can only be done by only analyzing the type hierarchy, but at other times the assignments must be tracked.
++ It is of course not always possible to find which method is called statically.
++ There a function pointers in C as well, and they sometime be analyzed using symbol table information (number and types of parameters) plus tracking assignments.
 
