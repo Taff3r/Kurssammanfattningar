@@ -1,4 +1,6 @@
 #include <stdlib.h>
+#include <stdio.h>
+#include <assert.h>
 typedef struct list_t list_t;
 struct list_t {
     void* data;
@@ -9,6 +11,9 @@ struct list_t {
 /* Create a new list node with this data. */
 list_t* new_list(void* data) {
     list_t* list = malloc(sizeof(list_t));
+    if (list == NULL)
+        exit(1);
+
     list->data = data;
     list->succ = list->pred = list;
     return list;
@@ -16,7 +21,6 @@ list_t* new_list(void* data) {
 
 /*
  * deallocate entire list, but not any data pointer. 
- *
  */
 void free_list(list_t* list) {
     if(list == NULL)
@@ -36,11 +40,13 @@ void free_list(list_t* list) {
 
 /* return the number of nodes in the list*/
 size_t length(list_t* list) {
-    size_t len = 0;
-    list_t* tmp = list;
+    size_t len  = 0;
+    list_t* tmp = list->succ;;
     if(list == NULL)
         return 0;
-    while(tmp->succ != list) {
+
+    ++len;
+    while(tmp != list) {
         ++len;
         tmp = tmp->succ;
     }
@@ -52,11 +58,12 @@ void insert_first(list_t** list, void* data) {
     list_t* new = new_list(data);
     list_t* h   = *list;
     
-    if(h != NULL){
+    if(h != NULL) {
         h->pred->succ = new;
-        new->pred = h->pred;
-        h->pred = new;
-        new->succ = h;
+        new->pred     = h->pred;
+        h->pred       = new;
+        new->succ     = h;
+        *list = new;
     } else
         h = new;
 }
@@ -79,10 +86,17 @@ void* remove_first(list_t** list) {
     list_t* h = *list;
     if(h == NULL)
         return NULL;
+    // Fetch data from head
     void* data = h->data;
-    list_t* n = h->succ;
+    // The succesor of head is now the new head
+    list_t* n  = h->succ;
+    // The tails succesor is now the new head
+    h->pred->succ = n;
+    // The new heads predecssor is now the tail
     n->pred = h->pred;
-    *list = n;
+    // List now points to the new head
+    *list      = n;
+    // Free memory of the old head
     free(h);
     return data;
 }
@@ -103,4 +117,30 @@ void** list_to_array(list_t* list, size_t* size) {
         it = it->succ;
     }
     return arr;
+}
+
+int main(void) {
+    list_t** list = malloc(sizeof(list_t*));
+    int a = 3;
+    *list = new_list(&a);
+    assert(length(*list) == 1);
+    int b = 5;
+    insert_first(list, &b);
+    assert(length(*list) == 2);
+    int c = 7;
+    insert_last(list, &c);
+    assert(length(*list) == 3);
+    assert(*(int*)((*list)->pred->data) == 7);
+    printf("%d", *(int*)((*list)->data));
+    assert(*(int*)((*list)->data) == 5);
+    int* t = remove_first(list);
+    size_t sz;
+    int** arr = (int**) list_to_array(*list, &sz);
+    assert(sz == 2);
+    assert(*t == 5);
+    assert(*arr[0] == 3);
+    assert(*arr[1] == 7);
+    free_list(*list);
+    free(list);
+    free(arr);
 }
