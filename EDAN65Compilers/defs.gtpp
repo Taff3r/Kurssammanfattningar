@@ -7,3 +7,5 @@ $DEF _endCode ```
 $DEF _IR intermediate representation
 $DEF _CFG context-free grammar
 $FUN _MDLINK($title, $url) [$title]($url)
+$DEF _DFA Deterministic Finite Automaton
+$DEF _NFA Non-deterministic Finite Automaton
