@@ -6,3 +6,4 @@ $DEF _javaCode ```java
 $DEF _endCode ```
 $DEF _IR intermediate representation
 $DEF _CFG context-free grammar
+$FUN _MDLINK($title, $url) [$title]($url)

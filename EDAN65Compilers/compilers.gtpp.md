@@ -1,4 +1,5 @@
 $INC /home/simont/git/Kurssammanfattningar-och-studietips/EDAN65Compilers/defs.gtpp
+$INC /home/simont/git/Kurssammanfattningar-och-studietips/EDAN65Compilers/links.gtpp
 # What is a compiler
 A compiler takes some source code and produces _ASM code.
 
@@ -155,3 +156,4 @@ Unsafe languages:
     + Runtime errors in the generated code can lead to undefined behaviour. Best case: hardware exception soon after the real error, stopping the program. (segfault) Worst case: the execution continues, computing the wrong result or giving a segfault much later.
     + Examples: C, Assembly.
 
+_SCANNING_
