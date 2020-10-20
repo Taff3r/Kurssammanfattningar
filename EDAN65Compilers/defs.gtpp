@@ -1,0 +1,8 @@
+$DEF _ASM assembly
+$DEF _OC object code
+$DEF _AST abstract syntax tree
+$DEF _cCode ```c
+$DEF _javaCode ```java
+$DEF _endCode ```
+$DEF _IR intermediate representation
+$DEF _CFG context-free grammar
