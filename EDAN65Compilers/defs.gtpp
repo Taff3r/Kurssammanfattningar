@@ -9,3 +9,4 @@ $DEF _CFG context-free grammar
 $FUN _MDLINK($title, $url) [$title]($url)
 $DEF _DFA Deterministic Finite Automaton
 $DEF _NFA Non-deterministic Finite Automaton
+$FUN _6TABLEROW($1, $2, $3, $4, $5)      | $1 | $2 | $3 | $4 | $5 |
