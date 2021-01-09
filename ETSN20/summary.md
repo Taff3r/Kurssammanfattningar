@@ -41,3 +41,137 @@ There are two major classes in EP, Valid-, and invalid classes.
 
 **Test-Driven Development (TDD)** - Define the tests first, the write the code, the refactor, iterate. May be combined with with CD, but not necessarily.
 
+
+## Debugging
+
+Distinct from testing.
+Needs appropriate tool support
+Must be done systemically.
+
+According to surveys, people know, but don't use the the debugging features.
+
+### Debugging process
+* Reproduce, some bugs might appear in different environments. It might appear at the testers, but not the developers. Therefore be very specific in the defect reports.
+* Reduce scope (find smallest test case that triggers the failure)
+* Define fault hypothesis. Is it programming errors, faulty data, etc.
+* Validate hypothesis.
+
+### Monitoring
+
+* Basic: `printf`
+    + Quick start
+    + Requires editing
+    + Impacts performance
+* Advanced: Debugging tools
+    + No editing
+    + Breakpoints, set, get
+    + May impact performance
+
+### Debugging Operations
+* Breakpoints
+* Single-stepping
+* Resumer operation
+* Temporary breakpoints
+* Inspecting Variables
+* Watchpoints 
+
+
+### Debugging complex systems
+* Reduce the configuration as much as possible, while still yielding the failure.
+* Track back to earlier versions while still yielding the failure.
+* Search web Q&A sites on others experience.
+
+### Using binary search principles
+* Assemble a list of potential problems and how to debug them
+* Seperate changes of the environment and source code changes
+    + Track down changes of the environment
+    + Isolate source code changes via back-out builds.
+* Zoom-in and conquer
+    + Memory debugger
+    + Conventional source code debugging
+    + Side-by-side debugging.
+
+### Change
+* **ONLY CHANGE ONE THING AT A TIME**
+* Keep and audit trail
+* Regression test!
+
+
+### Make the software easure to debug
+* Predictability  - sychronous exection, single thread, fixed seed random generatios, minimize caches.
+* Observability - logging, telemetry, high-level languages.
+* Sources of information - revision control logs.
+
+
+### Automated debugging?
+* Delta dubugging - Takes small steps and analyzes them.
+* Program slicing - Split the code into slices and analyze them.
+* Spectra based - Explores a spectrum of execution.
+
+Generally we can't automate debugging as of now.
+
+
+## Code Reviews
+* Review - activities to evalutate software artifact through manual scrutiny
+    + Inspection - formally defined review
+    + Walkthrough - author guided review
+* Sometimes called static testing in contrast to dynamic (execution based) testing. (A bit misleading)
+
+
+### Why review?
+
+* Main objective
+    - Detect faults
+* Other objectives
+    - Inform
+    - Educate
+    - Learn from (others) mistakes -> Improve!
+* (Undetected) faults may affect software quality negatively - even duing the development process.
+
+
+### Reviews complement testing
+**REVIEWS ARE MANDATORY FOR E.G. SAFETY CRITICAL SOFTWARE**
+You can review other things than code, such specifications, design, test plans, etc.
+
+### Review in OS Communities
+
+* Gate to getting code accepted
+* Performed by experts
+* Issues of triaging and priority (what to fix by whom?)
+* Sometimes called "Modern code reviews"
+
+
+### "Modern" Code Reviews
+* Charatierized by fewer formal requirements
+* Tool support for task distribution and conduct
+* Strive to make reviews more efficient and less time-consuming.
+
+
+### Code Review Process
+* Criteria 
+    + Readiness (Is it ready for review?)
+    + Preparation (Invite reviewers)
+    + Examination (Is there anything wrong? -> Change requests)
+    + Rework
+    + Validation (LGTM?)
+    + Exit -> Report
+
+### Usage-based reading
+Does the code make the usecases possible?
+
+
+### Getting the best from reviews
+* The author
+    + Is in the "hot seat"
+    + How do you react?
+* The dev tem
+    + Better prepared
+    + Feedback, both negative and postive.
+    + Communication
+* The Review team
+    + Critical Thinking
+    + Ability to detect omissions
+    + Who should participate in the review?
+* Cost-effective verification
+    + Minimising cost of correction
+    + Is it cost effective?
