@@ -175,3 +175,161 @@ Does the code make the usecases possible?
 * Cost-effective verification
     + Minimising cost of correction
     + Is it cost effective?
+
+## Software Testing Lifecycle
+
+Components in of themselves may very well work perfectly in isolation. However they may cause unwanted interference between each other when integrated into a system. Therfore integrationtests are needed.
+
+### What VS When
+Process models define conceptual workflow, one activity builds on the other. In pratice you can work in several iterations or parallel.
+
+### Waterfall Model
+The waterfall model is one of these conceptual workflows.
+System Req -> Software Reqs -> Analysis -> Program design -> Coding -> Testing -> Operations.
+Following this is risky and invites failure, even according to the author themselves.
+Instead he proposed several iterations to refine the first.
+
+### Incremental (RUP)
+Do the requirements, design, implementation, and testing once frist, then redo the it once before first launch.
+Repeat until product is finished.
+Still very document driven process.
+Very large increments.
+### Agile, e.g. XP
+Splits the functionality into smaller pieces. Cycles of weeks or days. Very small parts of the product is implemented in small stages.
+The software is not necessary delivered after each cycle, instead there are set days of delivery.
+The customer might also change their mind, and such the requirements are also changed in each cycle. 
+
+### Continious Delivery
+All stages are done continously and the product is continously released to the customer.
+
+### Levels of testing (V-Model)
+
+Requirements are tested by Acceptance tests
+The high-level design is tested by the System tests
+The detailed design is tested by the integration tests.
+The code is tested by Unit tests.
+
+All levels, except Acceptance tests are also regression tested, which make sure that no functionaliy goes missing.
+
+### Benefits of the V-Model
+
+* Intuitive and easy to explain
+    + Makes a good model for training people
+    + Shows how testing is related to other phases of the waterfall process
+* Quite adaptabel to various situations
+    + If the team is experioenced and understands the inherent limitations of the model
+* Conceptual framework for some standards for safety critical systems.
+
+### Weaknesses of the V-model
+* Hard to follow in practice
+* Document driven
+    + Relies on the existence, accurarcy, and timeliness of the documentation
+    + Asserts testing on each level is designed based on the deliverables of a single design phase
+* Communcicates change poorly
+    + Does not show how changes, fixes, and test rounds are handled.
+* Testing windows get squeezed
+* Based on simplistic waterfall model
+* Does not fit into iterative development
+
+
+## Levels, Types, and Phases - NOT THE SAME THING
+
+* Test level - a test level is a group of test activities that focus into ceratin level of the test target
+    + Test levels can be seen as levels of detail and abstraction
+    + "How big part of the system are we testing?"
+
+
+* Test Types - evaluate a system for a number of associated *quality goals*
+    + Testing seleccted quality characteristics.
+    + Testing to reveal ceratin types of problems
+    + Testing to verify/validate types of problems
+* Common test types:
+    + Functional: Installation, Smoke, Concurrency testing
+    + Non-Functional: Security, Usability, Performance
+* A certain test type can be applied on several test levels and in different phases.
+
+* Test Phases - Test phases are used to describe temporal parts in testing process
+    + Test phases are phases in a development or testing project.
+* Do not always match to the test levels or types
+    + In iterative development the phases may not match the test levels
+        - Often, there is unit testing but no unit test phase
+        - You can have several integration phases, or integration testing without an integration phase
+    + Phases *might* match the test levels
+        - As depicted in the V-model
+
+Test phases usually ask questions about:
+* When? Test scheduling/process
+* How? Automated vs. Manual
+* What? New vs regression test
+* Whom? Test organization
+
+
+### Agile/Time paced development
+Time is fixed, scope changes, e.g. Scrum
+* 30 days to complete iteration or Sprint
+* 90 days to complete alpha release
+* 90 days to complete beta release
+* 180 days for whole projects
+
+
+### Testing in Time Paced Development
+* Part of each development task
+* Testing is not a phase
+* Software is developed incrementally
+    + Is has to be tested incrementally
+* Rapid, time paced development
+    + Time boxed releases and increments
+    + Deadlines are not flexible
+* Scope is flexible
+    + Testing provides information for scoping
+
+### Approaches to Testing in Time Paced Development
+1. Automated regression testing
+    * Automated unit testing
+    * Test-driven development
+    * Daily builds and automated tests
+2. Stabilistation phase or increment
+    * Feature freeze
+    * Testing and debugging at the end of the increment or release
+3. Separate system testing
+    * Independent testing
+    * Separate testers or testing team
+
+
+## Organizing testing (Waterfall vs Agile)
+* Waterfall
+    + Division of labor
+        - Different teams perform different tasks, design, dev, test, etc.
+* Agile
+    + Integrated Teams
+        - Testing in collaboration, customer on site, etc.
+        - **Hard to scale up as the organization grows**
+
+### Scaling Agile
+Core principles are easy, practice is complex.
+Gets more complex as the organization and the amount of teams grows.
+
+* Requirments change all the time
+* Specifications are never final
+    + Let them change, test design is part of each task
+* Code is never "finished", never ready for testing
+* Not enough time to test
+    + Focus on development "finished" increments, tracking at the task level.
+    + Testing is part of each development task.
+* Need regression test everything in each increment
+* Developers always break things again
+* How can we trust?
+    + Trust comes frombuilding in the quality, not from the external testing "safety net"
+    + Automation is critical
+
+       
+
+### A/B Testing Continous Experimentation
+
+* Run multiple versions - evalutae online
+* Deployment strategies
+
+* Canary Releases
+* Dark Launches
+* Gradual Rollouts
+* A/B Testing 
