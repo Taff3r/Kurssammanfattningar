@@ -100,3 +100,23 @@ Compared to a normal binary-heap a Hollow heap uses a lot more memory (has to ke
 
 * When calling _decrease_key_ an item moves from _u_ to a new node _v_ and _rank(v)_ becomes _max(0, rank(u)-2)_.
     + Move all children _w_ from _u_ with _rank(w) < rank(v)_. If _rank(u) >= 2_ _u_ keeps their children with _r-1, r-2_ as rank.
+
+
+# Union-find
+Union-find is a data structure which allows to partion a graph in to sets of a graph.
+* Allows us to find which set an item in a graph _G_ belongs to.
+* Merge two sets.
+
+Each set is represent by a canoncial member, which has edges to nodes which are in each set as a linked-list.
+Finding if a node is the member of a set is simply traversing towards the root, which is the canonical member.
+
+Creating a union is a simple as setting the parent of one the sets canonical member as the parent of the other sets canonical member. Creating a tree.
+
+# What can make a naïve version of union-find slow?
+If we do the multiple finds where the path to the canonical member is a linked-list we have to |S| operations to find the canonical member. However if we during a find operation set the parent of each node in the linked-list to point directly to the root/canonical member we can do future finds quicker.  
+
+We can also do union-by-rank or union-by-size which have identical time complexities.
+
+When union-by-rank each set has an initial rank of zero. When the height of the of the set is increased the rank is also increase by one.  
+
+When merging the sets picking the set with higher rank as the new parent allows us build a more shallow tree.
