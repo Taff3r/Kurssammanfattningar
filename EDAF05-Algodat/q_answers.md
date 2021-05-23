@@ -113,10 +113,37 @@ Finding if a node is the member of a set is simply traversing towards the root, 
 Creating a union is a simple as setting the parent of one the sets canonical member as the parent of the other sets canonical member. Creating a tree.
 
 # What can make a naïve version of union-find slow?
-If we do the multiple finds where the path to the canonical member is a linked-list we have to |S| operations to find the canonical member. However if we during a find operation set the parent of each node in the linked-list to point directly to the root/canonical member we can do future finds quicker.  
+If we do the multiple finds where the path to the canonical member is a linked-list we have to |S| operations to find the canonical member. 
+#Explain how union-find can be made faster than as in the naïve version.
+However if we during a find operation set the parent of each node in the linked-list to point directly to the root/canonical member we can do future finds quicker.  
 
 We can also do union-by-rank or union-by-size which have identical time complexities.
 
 When union-by-rank each set has an initial rank of zero. When the height of the of the set is increased the rank is also increase by one.  
 
 When merging the sets picking the set with higher rank as the new parent allows us build a more shallow tree.
+
+# What does it mean that a directed graph is "strongly connected" (starkt sammankopplad), and how can you use BFS to determine if a graph is strongly connected?
+
+* Strongly Connected
+    + In directed graphs, nodes _u_ and _v_ are *mutually* reachable if there is a a path from _u_ to _v_ and a path from _v_ to _u_.
+    + A directed graph is strongly connected if every pair of nodes are mutually reachable.
+
+    + Lemma: Let _s_ be any node in _G_. _G_ is strongly connected <=> every node is reachable from _s_ and _s_ is reachable is reachable from any node.
+        - Proof: => follows directly from the definition of a strongly connected _G_. <= follows by constructing two paths: 
+        - * A path from _u_ to _v_ as _p = (u, ..., s, ...v)_
+        - * a path from _v_ to _u_ as _q = (v, ..., s, ...u)_
+
+### Determine strong connectivity
+We can determine if directed graph is strongly connected by selecting a node _v_ in _V_. Use _BFS_ on G from _v_ and check if all of _V_ is reached. The reconstruct _G_ into _Greverse_ by reversing all edges. Use BFS again on _Greverse_ from _v_ and check if all of _V_ is reached. If all of V is reached in both searches, _G_ is strongly connected.
+
+# Explain how we can find __strongly connected components__ in a directed graph using __Tarjans Algorithm__ 
+A strongly connected component is a set _S_ of vertices such that for every pair _u, v_ in _S_ there is a path _u -> v_. To find these components in a graph, we can use __Tarjan's Algorithm__ which is based on DFS.
+
+Consider the edge _(v, w)_. When _w_ is not yet visited we must visit it by calling _strong_connect(w)_. If _w_ has been visited, we have two amin cases:
+    * _w_ is not on the stack, beacuse it has already found its SCC.
+    * _w_ is on the stack, beacuse it's wairing to be popped.
+        + If _dfn(w) < dfn(v)_ then _v_ must set its lowlink so it does not think it is its own SCC.
+        + If _dfn(v) < dfn(w)_ then not more information for _v_ is available. There is another path from _v_ to _w_ due to to which they will belong to the same SCC.
+
+
