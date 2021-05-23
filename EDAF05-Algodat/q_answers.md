@@ -146,4 +146,9 @@ Consider the edge _(v, w)_. When _w_ is not yet visited we must visit it by call
         + If _dfn(w) < dfn(v)_ then _v_ must set its lowlink so it does not think it is its own SCC.
         + If _dfn(v) < dfn(w)_ then not more information for _v_ is available. There is another path from _v_ to _w_ due to to which they will belong to the same SCC.
 
+# What is a bipartite graph, and how can you determine if a graph is bipartite.
+A bipartite graph is bipartite if it can be colored with two colors such that every edge connects two nodes with different colors.
+If there exists an __odd cycle__ in a graph the graph is not bipartite.
+
+Determining if a graph is bipartite we use the BFS levels to see if there are edges between nodes in the same level, if there are edges between any nodes in the same level then the graph is __not__ bipartite.
 
