@@ -270,6 +270,44 @@ Both Prims and Kruskals algorithms are dependant on the concept of safe edges.
 ### Definition
 Let S be a proper subset of V, and not be the empty set. A partition (S, V-S) is a _cut_. An edge (u,v) crosses the cut if u is in S and v is in V - S. Let also A be the current selected edges in the MST, A does not necessarily create a connected graph (yet). An edge (u, v) is __safe__ if A union {(u,v)} is also the subset of the edges in some MST. But how do we know that an edge is safe?
 
-# Proof 
+### Proof 
 Assume T is a minimum spanning tree of a graph. We either have (u,v) in T (the MST is complete) or (u,v) not in T,
 Safely assume u is in S, and v is in V-S, then there is a path p in T which connects u and v, T union {(u,v)} which creates a cycle with p. There is an edge (x,y) in t which also crosses the cut and by assumption (x,y) is not in A. Since T is a MST it has only one path from u to v. Removeing (x,y) from T partitions V and adding (u,v) creates a new spanning tree U. Since (u,v) has minimum weight, w(U) <= w(T), and since T is a MST w(U) = w(T). Since A union {(u, v)} is a proper subset of U, (u,v) is safe for A.
+
+# What is Network Flow (nätverksflöde) about? Give an example of where it can be used.
+
+Network Flow is about selecting edges in a (directed) graph from a start node, _s_ to a sink node _t_ such as much flow is able to be sent from the start to sink node. Each edge has a capacity _c_ and that is most amount that can be sent along any edge.
+
+A common use cases is transportation planning, e.g. a railway. We wish to find the maximum amount of people/cargo that can be sent from one place to another, without exceeding the capacity of any edge giving us the maximum flow.
+
+There are several constraints on the nodes, the most important is the flow-conservation constraint, which says that the flow coming out of a node cannot be less or more than the flow coming into it. 
+
+# Explain the Ford-Fulkerson algorithm and why it is correct. What is the time complexity, and why?
+
+At first glance the Ford Fulkersson algorithm seems pretty simple:
+1. Start with flow f(e) = 0 for every edge e in Edges.
+2. Look for a simple path _p_ from _s_ to _t_ such that on every edge in p we can increase the flow in the direction from _u_ to _v_.
+3. If we could not find the path, we have reached maximum flow and we are done.
+4. Let each edge on p have a value sigma, which the means room for improvment sigma = f - c
+5. Let delta be the minimum of all sigmas on _p_.
+6. Increase the flow on _p_ with delta.
+7. GOTO 2. 
+
+The path can be found in some way, e.g. using BFS with the extra requirement that all edges should have a positive sigma.
+
+However in the algorithm it is not clear how we can reduce the flow on an edge, this where the residual graph comes in handy. 
+
+### Residual Graph 
+The residual graph _Gf_ is an new graph which is used in the FF algorithm. _Gf_ has the same nodes as _G_ but with additional edges along side the edges in _G_. These additional edges are called the _residual edges_ and exists to be able to undo previous augmentations. When an edge (u,v) is augmented and its flow updated, the residual edge (v,u)'s capacity is set to the negative flow, this means that these edges are still valid paths to take in the next iteration of the algorithm since sigma = f - c, and if c is negative sigma = f - -c = f + c which means that the room for improvement is still positive and can be used as an edge in the next iteration.
+
+
+### Time complexity
+The time complexity of finding the maximum flow is dependant on the method used to find the augmenting paths _p_.
+If DFS is used the algorithm runs in O(Ef), where E is the number of edges and f is the maximum flow in the graph.
+Since DFS is somewhat random (depends on the order of edges in the input), and in the worst case can pick the edge with the lowest value all iterations but the last, will take a very long time to find the maximum flow.
+
+If a BFS method is used instead, in which case the algorithm is instead called Edmond-Karp, the run-time complexity is instead bounded by the number of edges and nodes in the graph, and becomes O(|V||E|^2), since the path can be found in O(|E|) time assuming |V| <= |E|/2 and BFS has a runtime of O(|V| + |E|) = O(|E|/2 + |E|) = O(|E|).
+And augmenting the paths takes an additonal |V| time since the path can be at most |V| long. Once a path has been selected atleast one edge gets _saturated_ and can not be increase further. So that the next time the path is selected the path cannot be shorter (since BFS finds the minimum number of jumps) than last time, which means at most |E| additional iterations can run.
+
+# Explain Goldberg-Tarjan (preflow-push) algorithm and why it is correct
+
