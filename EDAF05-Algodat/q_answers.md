@@ -152,3 +152,124 @@ If there exists an __odd cycle__ in a graph the graph is not bipartite.
 
 Determining if a graph is bipartite we use the BFS levels to see if there are edges between nodes in the same level, if there are edges between any nodes in the same level then the graph is __not__ bipartite.
 
+# Explain how __Djikstras Algorithm__ works and why it is correct.
+
+Djikstras Algorithm is an algorithm which can find the shortest path in a weighted graph, were the shortest path means that the sum of the weights along the found path is the minimum in the graph.
+
+### Djikstras algorithm works in the following way:
+Given a __directed__ graph _G(V, E)_, a weight function _(u, v) -> w_, where _w((u,v)) >= 0_, and a node _s in V_. The algorithm computes the shortest path from _s_ to every other node. Dijktras algorithm computes the two outputs:
+    * The shortest path distance from _s_ to _v_.
+    * for each node _v in {V} - s_, the predcessor of v in the computed shortest path from _s to v_.
+__NOTE!__ There can exist several different paths to a node and that one of one these are computed. 
+Djikstras uses two sets of nodes:
+    * a set _Q_ which are the nodes we yet have found the shortest path to.
+    * a set _S_ which we have already found the shortest path to.
+We only add an edge when it is to the node which is closest to the start vertex. To pint the shortest path from _s_ to a node _v_, simply print _v_ and follow _pred(v)_, towards _s_. 
+
+Djikstras algorithm uses a priority queue as Q, where it extracts the minimum from the queue which is the value of d(v).
+Here is psudoe code for Djikstras
+
+```
+Dijkstra(G, s)
+    for all u in (V - {s}), d(u) = INFINITY 
+    d(s) = 0
+    R = {}
+    while R not equal to V:
+        pick u not in R with smallest d(u)
+        R = R union with {u}
+        for all vertices v adjacent to u
+            if d(v) > d(u) + w(u, v)
+                d(v) = d(u) + w(u, v)
+```
+### Proof correctness for Djikstras:
+Proof by induction:
+    + Base case |S| = 1 which is true since S = {s} and d(s) = 0. 
+    + Assume the theorem is true for |S| >= 1.
+    + Let v the next node addded to S, and pred(v) = u. d(v) = d(u) + w(e), where e = (u, v)
+    + Assume in contradiction there exists a shorter path from s to v. containing the edge (x,y) with x in S, and y not in S, followed by a subpath y to v.
+        - Since the path via y to v is shorter than the path from u to v, d(y) < d(v)
+        - but is is not since is chosen and not y.
+        - this contradiction means no shorter apth to v exists. 
+
+# Explain what can happen if there are negative edges.
+If there are negative edges in a graph used in Djikstras algorithm, a shortest path cannot be found. This is due tothe greedy nature of the algorithm. Assume we have graph:
+```
+G = {
+    V : {A, B, C},
+    E : {(A, C, 2), (A, B, 5), (B, C, -10)}
+};
+```
+When calling djikstras with starting node A. It will automatically assume the shortest path to is 2, and added to the finished nodes. It cannot see the step to B which then reduces the total cost A->C to 5  + -10  = -5 < 2.
+
+
+# Explain how the Bellman-Ford algorithm works and why it is correct 
+The alternative when using negaive weights is to use the Bellman-Ford algorithm. 
+Bellman-Ford algorithm is dynamic programming algorithm.
+
+Bellman-Ford builds and table M[n][n] where n is the number of nodes in the graph.
+The problem is to find the shortest path from _s_ to _p_.
+
+In the matrix M the first index is the edge used to reach the node of the second index.
+We build M using the Bellman-Ford algorithm in O(n^3) or O(|V| * |E|) time in a dense graph or , and uses O(n^2) space.
+
+```c
+int M[n][n]
+
+int** make_table(graph G, node s, node t)
+{
+    n = G.num_vertices;
+    
+    M[0][t] = 0;
+    for (node v : G)
+        if (v != t)
+            M[0][v] = INFINITY;
+    int i = 1;
+
+    while ( i < n - 1) {
+        for (node v : G) {
+            M[i][v] = min(M[i - 1][v], M[i - 1][w] + c(v, w)) /* w is a neighbor to v */
+        } 
+    }
+    
+}
+```  
+_i_ represents the number of edges we traveled to get to v so M[2][v] is the cost of getting from _t_ to _v_ using 2 edges. 
+### Proof of correctness for Bellman-Ford 
+TODO!
+
+# Explain what a Minimum Spanning Tree (MST) (Minimalt Uppspännande Träd) is and how it can be found using Prim's and Kruskal's Algorithm.
+A MST is a tree that connects a node to all other nodes with minmal cost for the edges in a undirected connected graph.
+### Prims Algorithm
+Using Prims algorithm, which is similar to Djikstras algorithm we can find the MST by usinga priority queue which chas the keys which are the current cost of getting to that node.
+* We start by adding setting a root node, e.g. the first node in our graph.
+* We also have some way of knowing which of nodes are currently in the queue, e.g. an array of booleans.
+* We set the weight of all nodes to infinity, with the exception of the root node which has a weight of zero.
+* Add all the nodes to the queue.
+* Get the node with the currently smallest cost, _u_
+* For all neighbors to _u_:
+    + If the neighbor is in the queue
+        - If the cost of getting to _u_ is lower than the weight((u, neighbor))
+            + Update the cost of the node to be weight((u, neighbor))
+            + Update the priority queue so that the new cost of v is represented.
+
+This works because of safe edges. (See later)
+
+### Kruskals Algorithm
+Kruskals Algorithm always selects the edge with minimal weight which does not create a cycle.
+It starts by creating a forest of nodes, which eventually becomes a spanning tree.
+
+To detect these cycles union-find data structre is used.
+* When two sets are to be merged => Check if u and v are already in the same set using _find_.
+    + If they are in the same set the merge can be ignored, since it would create a cycle.
+    + O/w merge the sets.
+
+Since the edges selected are sorted/extracted by their weight the smallest path will always be chosen, and redundant edges will not be used since they would create a cycle.
+ 
+# What is a "safe edge" (säker kant) for minimum spanning trees?
+Both Prims and Kruskals algorithms are dependant on the concept of safe edges.
+### Definition
+Let S be a proper subset of V, and not be the empty set. A partition (S, V-S) is a _cut_. An edge (u,v) crosses the cut if u is in S and v is in V - S. Let also A be the current selected edges in the MST, A does not necessarily create a connected graph (yet). An edge (u, v) is __safe__ if A union {(u,v)} is also the subset of the edges in some MST. But how do we know that an edge is safe?
+
+# Proof 
+Assume T is a minimum spanning tree of a graph. We either have (u,v) in T (the MST is complete) or (u,v) not in T,
+Safely assume u is in S, and v is in V-S, then there is a path p in T which connects u and v, T union {(u,v)} which creates a cycle with p. There is an edge (x,y) in t which also crosses the cut and by assumption (x,y) is not in A. Since T is a MST it has only one path from u to v. Removeing (x,y) from T partitions V and adding (u,v) creates a new spanning tree U. Since (u,v) has minimum weight, w(U) <= w(T), and since T is a MST w(U) = w(T). Since A union {(u, v)} is a proper subset of U, (u,v) is safe for A.
