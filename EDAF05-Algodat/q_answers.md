@@ -310,4 +310,94 @@ If a BFS method is used instead, in which case the algorithm is instead called E
 And augmenting the paths takes an additonal |V| time since the path can be at most |V| long. Once a path has been selected atleast one edge gets _saturated_ and can not be increase further. So that the next time the path is selected the path cannot be shorter (since BFS finds the minimum number of jumps) than last time, which means at most |E| additional iterations can run.
 
 # Explain Goldberg-Tarjan (preflow-push) algorithm and why it is correct
+TODO
 
+# Explain why the Gale-Shapley finds a stable matching (stabil matchning)?
+Gale-Shapley is an algorithm for finding stable matchings, e.g. the stable marrige problem.
+
+Lets say we have a number of men which each have a preference list containing the women they would like most to marry.
+The same goes for the women.
+A stable matching is a match so that neither partner would prefer another partner who also would prefer to swap to that partner.
+
+Gale-Shapely finds these matching using the following algorithm:
+
+0. Add each man to FIFO queue
+1. While the queue is not empty
+2. Pick out the man at the front of the queue
+3. Let the man propose to the woman he most prefers and has not yet proposed to
+4. If the woman is single make them a pair
+5. else if the woman prefers that man over their current man
+    + Dump her current man and become a pair with the man who proposed
+    + Add the dumped man to the queue
+6. else the man goes back in the queue.
+7. goto 1.
+
+When the queue is empty the algorithm terminates, and all men and women should be matched. 
+
+In Gale-Shapley men get worse and worse matchings while women get better and better, however women doesnt get much say in the matter (atleast in the begining).
+
+The algorithm is correct since each woman gets to "upgrade", while the men get to "downgrade", and if they would end up without a matching the number of men and women would not be equal. If a man doesn't get his preferd partner it means either:
+a) He hasn't proposed to her (not possible)
+b) His prefered partner prefers someone else
+
+If a woman doesn't get her prefered partner it means either:
+a) He hasn't proposed to her (he prefers another and hasn't been dumped)
+b) She hasn't dumped her current match (not possible)
+
+
+# Explain the time complexity of Gale-Shapley
+Men can propose at most n times and can therefor be put back in the queue at most n - 1 times.
+Women can look up their prefered partner in constant time by inverting their preferce list. 
+
+# What is sequence alignment and how can it be done?
+Sequence alignment we are interested in comparing two strings to see how similar they are based on some score.
+When two strings/sequences are not identical one of two things can happen:
+1. A symbol is missing from either string
+2. or at a certain point the charcters have different symbols.
+
+A way to perform sequence alignment is to use a dynamic programming aproach using some scoring system between the characters and a penalty for inserting a _indel_ (insertion or deletion).
+
+Using the dynamic approach we can use the recurrence:
+* OPT(i, 0) = i * indel value (pad the remaining sequence of i)
+* OPT(0, j) = j * indel value (pad the remaining sequence of j)
+* OPT(i, j) = matching value(stra[i], strb[j]) + OPT(i - 1, j - 1) (use the matching value and move on)
+* OPT(i, j) = indel value + OPT(i, j - 1) (use the indel value for i and move on)
+* OPT(i, j) = indel value + OPT(i - 1, j) (use the indel value for j and move on)
+
+Each value i, j in OPT represents the maximum value in a memoized function since each value is the maximum of the three possible paths to take.  
+
+Finding the optimal alignment is then done by backtracking the matrix, by taking the shortest path from n,m to 0,0.
+# What does it mean that a problem is NP-Complete?
+A problem is NP-complete if they are __most likely__ hard to solve, where most likely hard to solve means there is no known way of calculating the solution or answering the problem formulation with a yes or no question, in polynomial time.
+
+# If you want to prove that a new problem is NP-compelete, how would you do it?
+First we show that our problem _P_ is in NP, by showing that there exists an verification algorithm in _P_.
+If we know another problem, _Q_ that is NPC and we can apply a reduction, i.e. we have some way of mapping the output of _Q_ to our problem _P_ so that their outputs are equivalent, we know that _P_ is also NPC.  
+
+# Explain how the first NP-complete problem was shown to be NP-complete.
+Cook proved in 1971 that circuit satisfiability has NP-Complete.
+It takes two steps to prove that a problem is NP-Complete
+First we need an efficient way to tell if the solution is valid.
+ 
+It is very easy in a circuit since we only need to plug in the input to the circuit and observe the output. 
+
+Second we need to prove that circuit satisfiability is atleast as hard as all other problems in NP. Which is difficult when there are no other problems in NPC.
+
+If we simplify and say that a circuit and a algorithm is equivalent and that from an algortihm a circuit can be compiled. 
+
+From this the follwing (simplified) proof can be constructed:
+
+* Each problem _X_ in NP has an efficient verficiation algorithm, _A_.
+* A takes two parameters input _I_ for _X_ and the output from _X_, _S_.
+* I.e. A(I, S) => Can deduce if S is a solution for _X_ given _I_.
+* Let _I_ have _n_ bits and _S_ have _p(n)_ bits, where _p(n)_ is some polynomial amount of bits.
+* Create a circuit that implements A and takes _n + p(n)_ bits of input data.
+* Let _I_ be the constant length input, and _p(n)_ be the bits that the circuit SAT solver needs to find.
+* We have now constructed an algorithm A that uses circuit satisfiablity (by checking if the solution is valid or not) to determine the solution to any problem _X_.
+
+Therefor we can determine that if we solve circuit satisifiability we can solve any other problem in NP.
+This again works by giving equivalence between circuits and programs.
+
+# Explain how it can be shown that Hamiltonian Cycle is NP-Complete.
+A Hamiltonian Cycle is directed graph so that if we start in _s_ can we visit all nodes and still come back to _s_?
+A Graph can be reduced to 3SAT problem, which is known to be NP-Complete. Therefor Hamiltonian Cycles are also NP-complete.
