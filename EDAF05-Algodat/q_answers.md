@@ -391,10 +391,11 @@ From this the follwing (simplified) proof can be constructed:
 * A takes two parameters input _I_ for _X_ and the output from _X_, _S_.
 * I.e. A(I, S) => Can deduce if S is a solution for _X_ given _I_.
 * Let _I_ have _n_ bits and _S_ have _p(n)_ bits, where _p(n)_ is some polynomial amount of bits.
-* Create a circuit that implements A and takes _n + p(n)_ bits of input data.
+* Create a circuit that implements A (i.e. the circuit is the program/solution checker) and takes _n + p(n)_ bits of input data.
 * Let _I_ be the constant length input, and _p(n)_ be the bits that the circuit SAT solver needs to find.
 * We have now constructed an algorithm A that uses circuit satisfiablity (by checking if the solution is valid or not) to determine the solution to any problem _X_.
 
+In short if we can determine the circuit A which can check the solution solve any problem in NP, i.e. given the problem and input, give us the answer yes or no.
 Therefor we can determine that if we solve circuit satisifiability we can solve any other problem in NP.
 This again works by giving equivalence between circuits and programs.
 
