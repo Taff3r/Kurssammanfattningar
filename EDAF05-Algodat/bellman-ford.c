@@ -21,16 +21,18 @@ struct node_t {
     int d;
 };
 
+void print_node(node_t* n) 
+{
+    printf("Node %c, has cost d = %d\n", n->letter, n->d);
+}
 void make_table(node_t* G, edge_t* E, node_t* s)
 {
-    int n;
     int i;
-
     for (i = 0; i < NUM_VERTICES; ++i) {
         G[i].d = INT_MAX;
         G[i].pred = NULL;
     }
-    
+
     s->d = 0;
     i = 1; 
     while (i++ <= NUM_VERTICES - 1) {
@@ -40,9 +42,20 @@ void make_table(node_t* G, edge_t* E, node_t* s)
             v = &G[e.u];
             w = &G[e.v];
             if (v->d + e.cost < w->d) {
-               w->d = e.cost + v->d;
-               w->pred = v; 
+                w->d = e.cost + v->d;
+                w->pred = v; 
             }
+        }
+    }
+    for (int k = 0; k < NUM_EDGES; ++k) {
+        edge_t e = E[k];
+        node_t *v, *w;
+        v = &G[e.u];
+        w = &G[e.v];
+        print_node(v);
+        print_node(w);
+        if (v->d + e.cost < w->d) {
+            fprintf(stderr, "Negative cycle detected!\n");
         }
     }
 }
@@ -74,12 +87,12 @@ int main(void)
 {
     node_t* graph; 
     graph = malloc(NUM_VERTICES * sizeof(node_t));
-    
+
     graph[0].letter = 's';  
     graph[1].letter = 'a';  
     graph[2].letter = 'b';  
     graph[3].letter = 't';  
-    
+
     graph[0].edges = malloc(sizeof(edge_t) * 2);
     graph[1].edges = malloc(sizeof(edge_t) * 2);
     graph[2].edges = malloc(sizeof(edge_t) * 1);
@@ -89,15 +102,21 @@ int main(void)
     graph[1].num_edges = 2;
     graph[2].num_edges = 1;
     graph[3].num_edges = 0;
-   
-    edge_t edges[NUM_EDGES]; 
 
+    edge_t edges[NUM_EDGES]; 
+#ifdef NEGATIVE
+    edges[0] = (edge_t) {.u = 0, .v = 1, .cost = 3};
+    edges[1] = (edge_t) {.u = 0, .v = 3, .cost = 5};
+    edges[2] = (edge_t) {.u = 1, .v = 2, .cost = -2};
+    edges[3] = (edge_t) {.u = 1, .v = 3, .cost = 4};
+    edges[4] = (edge_t) {.u = 2, .v = 1, .cost = 1};
+#else
     edges[0] = (edge_t) {.u = 0, .v = 1, .cost = 4};
     edges[1] = (edge_t) {.u = 0, .v = 2, .cost = 3};
     edges[2] = (edge_t) {.u = 1, .v = 3, .cost = 1};
     edges[3] = (edge_t) {.u = 1, .v = 2, .cost = -2};
     edges[4] = (edge_t) {.u = 2, .v = 3, .cost = 1};
-
+#endif
     graph[0].edges[0] = edges[0];
     graph[0].edges[1] = edges[1];
 
