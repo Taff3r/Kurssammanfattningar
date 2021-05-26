@@ -229,6 +229,7 @@ int** make_table(graph G, node s, node t)
         for (node v : G) {
             M[i][v] = min(M[i - 1][v], M[i - 1][w] + c(v, w)) /* w is a neighbor to v */
         } 
+        i++;
     }
     
 }
@@ -402,3 +403,19 @@ This again works by giving equivalence between circuits and programs.
 # Explain how it can be shown that Hamiltonian Cycle is NP-Complete.
 A Hamiltonian Cycle is directed graph so that if we start in _s_ can we visit all nodes and still come back to _s_?
 A Graph can be reduced to 3SAT problem, which is known to be NP-Complete. Therefor Hamiltonian Cycles are also NP-complete.
+
+# Explain how the Traveling salesman problem is NP-Complete
+TSP is the optimization problem of Hamiltonian Cycle, except the edges now weights instead. The question is formulated as: "Can we find a _tour_ (hamiltonian cycle) such that the total cost of the traversing the tour is less than _x_?
+We can easily reduce the problem to finding a hamiltonian cycle, by setting the weights of the edges between adjacent nodes to one and two to others, if then we can find a hamiltonian cycle which the distance is equal to |Nodes| we can also solve TSP.
+# Explain how it can be shown that graph coloring is NP-complete.
+Graph coloring can be reduced to 3SAT.
+# Explain what the simplex algorithm can do (but not how it works)
+
+The simplex algorithm can take a maximizing function, with n variables bound by constraints. It uses some clever algebraic manipulation to jump from the next most promising (highest value of the maximizing function) intersection of the constraining function, until it finds the maximum value of the maximizing function. 
+The algorithm always terminates since there are a finite amount of intersection, however there does not always exist a solution since the feasible region might be unbounded. 
+
+# Explain what the branch-and-bound algoritm (förgrena-och-begränsa) is and how it can be exploited in integer linear programming
+
+Branch-and-bound is paradigm used to explore possible better solutions by "branching" into tree where the next node takes a variant of its parent solution and tries to improve. This tree might become infintely large, so there must be a way to "bound" the exploration, i.e. if the child node found a worse solution we can stop exploring.
+
+In integer programming we would like to still use the simplex algorithm, but we can't just round the solutions since that would be incorrect. Instead we try to relax the integer constraint on the decisions variables and find a solution which might contain an integer solution. So when we find a solution and some variable _xk_ is not an integer we add a restriction to the new exploratory node that variable must be atleast the floor of that number, or greater than the ceiling, and try to find a solution using that additional constraint. When we find an integer solution we save that in a variable _best_. If we later find a better solution we can remove all other nodes which had worse integer solution. Bounding. We also a fixed amount of nodes that can be constructed, _h_, so that we do not grow our tree to large.
